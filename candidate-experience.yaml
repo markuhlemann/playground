@@ -1,0 +1,52 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "0.0.1"
+  title: Candidate Experience
+
+# Describe your paths here
+paths:
+  /picklist:
+    get:
+      description: This is my picklist service
+      parameters:
+        #these are some parameters
+        -
+          name: picklistid
+          in: query
+          description: the ID of the picklist. Can be a comma separated list
+          required: true
+          type: string  
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Picklist'
+      
+
+definitions:
+  PicklistItem:
+    type: object
+    properties:
+      label:
+        type: string
+      picklistId:
+        type: string
+      picklistOptionId:
+        type: string
+      externalCode: 
+        type: string
+      locale: 
+        type: string
+
+
+  Picklist:
+    type: array
+    items:
+      $ref: '#/definitions/PicklistItem'
