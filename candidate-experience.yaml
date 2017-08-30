@@ -5,7 +5,7 @@ swagger: '2.0'
 
 # This is your document metadata
 info:
-  version: "0.0.1"
+  version: "0.0.2"
   title: Candidate Experience
 
 # Describe your paths here
@@ -28,7 +28,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Picklist'
-      
+
+  
 
 definitions:
   PicklistItem:
@@ -55,3 +56,117 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/PicklistItem'
+
+  PreferredLocation:
+    type: object
+    properties:
+      state: 
+        type: string
+      statePicklistId:
+        type: string
+      store:
+        type: string
+      storePicklistId:
+        type: string
+      suburb: 
+        type: string
+      suburbPicklistId:
+        type: string
+        
+  PreferredRole:
+    type: object
+    properties:
+      role:
+        type: string
+
+  GTKYAnswer:
+    type: object
+    properties:
+      answerId:
+        type: string
+      answerText: 
+        type: string
+    
+  GTKYQuestion:
+    type: object
+    properties:
+      questionId:
+        type: string
+      questionText:
+        type: string
+      imageLink:
+        type: string
+      answers:
+        type: array
+        items:
+          $ref: '#/definitions/GTKYAnswer'
+    
+  Candidate:
+    type: object
+    properties:
+      candidateId:
+        type: string
+      address:
+        type: string
+      address2:
+        type: string
+      city:
+        type: string
+      zip:
+        type: string
+      agreeToPrivacyStatement:
+        type: string
+      cellPhone:
+        type: string
+      contactEmail:
+        type: string
+      primaryEmail:
+        type: string
+      country:
+        type: string
+      creationDateTime:
+        type: string
+        format: date
+      dateOfBirth:
+        type: string
+        format: date
+      dateofAvailability:
+        type: string	
+      firstName:
+        type: string
+      middleName:
+        type: string
+      lastName:
+        type: string	
+      preferredName:
+        type: string	
+      formerEmployeeYes:
+        type: string	
+      homePhone:
+        type: string
+      lastLoginDateTime:
+        type: string	
+        format: date
+      privacyAcceptDateTime:
+        type: string
+        format: date	
+      visaExpiration:	
+        type: string
+        format: date	
+      visaNumber:
+        type: string
+      preferredLocations:
+        type: array
+        items:
+          $ref: '#/definitions/PreferredLocation'
+      preferredRoles:
+        type: array
+        items:
+          $ref: '#/definitions/PreferredRole'
+      gtkyQuestions:
+        type: array
+        items:
+          $ref: '#/definitions/GTKYQuestion'
+        
+      
+    
