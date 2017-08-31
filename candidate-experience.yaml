@@ -13,6 +13,10 @@ paths:
   /picklist:
     get:
       description: This is my picklist service
+      operationId: getPicklist
+      produces:
+        - application/xml
+        - application/json
       parameters:
         #these are some parameters
         -
@@ -29,7 +33,23 @@ paths:
             items:
               $ref: '#/definitions/Picklist'
 
-  
+
+  '/candidate/{id}':
+    get:
+      description: Reads a candidate by the candidateId
+      parameters:
+        - in: path
+          name: id
+          description: get candidate  by id
+          required: true
+          type: integer 
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Candidate'
+          
+      
 
 definitions:
   PicklistItem:
