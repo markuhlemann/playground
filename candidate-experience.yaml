@@ -97,6 +97,7 @@ definitions:
       imageLink:
         type: string
       answers:
+        title: answers
         type: array
         items:
           $ref: '#/definitions/GTKYAnswer'
