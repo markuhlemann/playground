@@ -5,7 +5,7 @@ swagger: '2.0'
 
 # This is your document metadata
 info:
-  version: "0.0.2"
+  version: "0.0.3"
   title: Candidate Experience
 
 # Describe your paths here
@@ -15,12 +15,11 @@ paths:
       description: This is my picklist service
       operationId: getPicklist
       produces:
-        - application/xml
         - application/json
       parameters:
         #these are some parameters
         -
-          name: picklistid
+          name: picklistId
           in: query
           description: the ID of the picklist. Can be a comma separated list
           required: true
@@ -34,22 +33,63 @@ paths:
               $ref: '#/definitions/Picklist'
 
 
-  '/candidate/{id}':
+  /candidate/{id}:
     get:
       description: Reads a candidate by the candidateId
+      operationId: getCandidate
+      produces:
+        - application/json
       parameters:
         - in: path
           name: id
-          description: get candidate  by id
+          description: Candidate ID
           required: true
           type: integer 
       responses:
         200:
           description: successful operation
           schema:
-            $ref: '#/definitions/Candidate'
+            type: array
+            items:
+              $ref: '#/definitions/Candidate'
           
+  /candidate/exists:
+    get:
+      description: check whether a candidate already exists
+      operationId: checkCandidate
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: email
+          description: Email of the Candidate
+          required: true
+          type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: boolean
+
+  /quiz/{id}/generate:
+    get:
+      description: Generates new Quiz Questions for a Candidate
+      operationId: generateQuiz
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Candidate ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: boolean
       
+
 
 definitions:
   PicklistItem:
