@@ -143,9 +143,7 @@ definitions:
       zip:
         type: string
       agreeToPrivacyStatement:
-        type: object
-        items:
-          $ref: '#/definitions/PicklistOption'
+        $ref: '#/definitions/PicklistOption'
       cellPhone:
         type: string
       contactEmail:
