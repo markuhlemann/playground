@@ -77,6 +77,13 @@ definitions:
         items:
           $ref: '#/definitions/PicklistItem'
 
+  PicklistOption:
+    type: object
+    properties:
+      id: 
+        type: string
+  
+  
   PreferredLocation:
     type: object
     properties:
@@ -136,7 +143,9 @@ definitions:
       zip:
         type: string
       agreeToPrivacyStatement:
-        type: string
+        type: object
+        items:
+          $ref: '#/definitions/PicklistOption'
       cellPhone:
         type: string
       contactEmail:
