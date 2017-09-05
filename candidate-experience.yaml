@@ -1,11 +1,8 @@
-# Example YAML to get you started quickly.
-# Be aware that YAML has indentation based scoping.
-# Code completion support is available so start typing for available options.
 swagger: '2.0'
 
 # This is your document metadata
 info:
-  version: "0.0.3"
+  version: "0.0.4"
   title: Candidate Experience
 
 # Describe your paths here
@@ -18,8 +15,7 @@ paths:
         - application/json
       parameters:
         #these are some parameters
-        -
-          name: picklistId
+        - name: picklistId
           in: query
           description: the ID of the picklist. Can be a comma separated list
           required: true
