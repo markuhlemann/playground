@@ -71,7 +71,7 @@ paths:
           schema:
             type: boolean
 
-  /quiz/{id}/generate:
+  /candidate/{id}/generatequiz:
     get:
       description: Generates new Quiz Questions for a Candidate
       operationId: generateQuiz
@@ -89,7 +89,23 @@ paths:
           schema:
             type: boolean
       
-
+  /candidate/{id}/evaluatequiz:
+    post:
+      description: Evaluates the score of the quiz
+      operationId: evaluateQuiz
+      produces: 
+        - application/json
+      parameters: 
+        - in: path
+          name: id 
+          description: Candidate ID 
+          required: true
+          type: integer
+      responses:
+        200:
+          description: operation successful
+          schema:
+            $ref: '#/definitions/GTKYQuizResult'            
 
 definitions:
   PicklistItem:
@@ -168,6 +184,14 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/GTKYAnswer'
+    
+  GTKYQuizResult:
+    type: object
+    properties:
+      gtkyExpiry: 
+        type: string
+      
+
     
   Candidate:
     type: object
