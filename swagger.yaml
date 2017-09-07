@@ -1,0 +1,209 @@
+swagger: "2.0"
+info:
+  description: "This is the API definition for the Candidate Profile and Hiring Manager activities to SuccessFactors"
+  version: "1.0.0"
+  title: "Candidate Profile"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@accenture.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "woolworths.com.au"
+basePath: "/v2"
+tags:
+- name: "candidate"
+  description: "Everything about Candidates"
+  externalDocs:
+    description: "Find out more"
+    url: "http://woolworths.com.au"
+- name: "hiringmanager"
+  description: "The Hiring Manager related services"
+  externalDocs:
+    description: "Find out more about our stores"
+    url: "http://woolworths.com.au"
+- name: "utils"
+  description: "Utility operations"
+  externalDocs:
+    description: "Find out more"
+    url: "http://woolworths.com.au"
+schemes:
+- "http"
+paths:
+  /candidate:
+    post:
+      tags:
+      - "Candidate"
+      summary: "Upsert candidate"
+      description: "This operation is performed for inserting or updating a candidate"
+      operationId: "upsertCandidate"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Create or Update candidate entity"
+        required: true
+        schema:
+          $ref: "#/definitions/Candidate"
+      responses:
+        default:
+          description: "successful operation"
+        400:
+          description: "Error in Candidate information"
+          
+  /candidate/logout:
+    get:
+      tags:
+      - "candidate"
+      summary: "Logs out current logged in candidate session"
+      description: ""
+      operationId: "logoutCandidate"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"        
+  /candidate/exists:
+    get:
+      tags:
+      - "candidate"
+      summary: "Get candidate by candidate email"
+      description: check whether a candidate already exists
+      operationId: checkCandidate
+      produces:
+      - "application/json"
+      parameters:
+      - name: "key"
+        in: "query"
+        description: "Field name eg primaryEmail"
+        required: true
+        type: string
+      - name: "value"
+        in: "query"
+        description: "Value of field eg email address"
+        required: true
+        type: string  
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/EmailAdd"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"    
+  /candidate/{candidatename}:
+    get:
+      tags:
+      - "candidate"
+      summary: "Get candidate by candidate name"
+      description: ""
+      operationId: "getCandidateByName"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "candidatename"
+        in: "path"
+        description: "The name that needs to be fetched. Use user1 for testing. "
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Candidate"
+        400:
+          description: "Invalid candidatename supplied"
+        404:
+          description: "Candidate not found"
+
+  /picklist:
+    get:
+      tags:
+      - "Utils"
+      operationId: getPicklist
+      produces: 
+      - "application/json"
+      parameters: []      
+      responses:
+        default:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/Picklist"
+                  
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://woolworths.com.au/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify candidate in your account"
+      read:pets: "read your candidate"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  Candidate:
+    type: "object"
+    properties:
+      candidateId:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      primaryEmail:
+        type: "string"
+      contactEmail:
+        type: "string"
+      password:
+        type: "string"
+      phone:
+        type: "string"
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User Status"
+    xml:
+      name: "User"
+      
+  EmailAdd:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+    xml:
+      name: "User"    
+ 
+  Picklist:
+    type: "object"
+    properties:
+      PickListValues:
+        type: array
+        items:
+          $ref: '#/definitions/PicklistOption'
+  
+  PicklistOption:
+    type: object
+    properties:
+      label:
+        type: string
+      picklistId:
+        type: string
+      picklistOptionId:
+        type: string
+      externalCode:
+        type: string
+      locale: 
+        type: string
+      
+  
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
