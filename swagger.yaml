@@ -51,59 +51,6 @@ paths:
         404:
           description: "Candidate not found"    
           
-  /candidate/login:
-    get:
-      tags:
-      - "candidate"
-      summary: "Logs candidate into the system"
-      description: ""
-      operationId: "loginCandidate"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "candidatename"
-        in: "query"
-        description: "The candidate name for login"
-        required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the candidate"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-        400:
-          description: "Invalid candidatename/password supplied"
-          
-  /candidate/logout:
-    get:
-      tags:
-      - "candidate"
-      summary: "Logs out current logged in candidate session"
-      description: ""
-      operationId: "logoutCandidate"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters: []
-      responses:
-        default:
-          description: "successful operation"        
-          
   /candidate/candidateExists:
     get:
       tags:
@@ -134,7 +81,7 @@ paths:
         404:
           description: "Candidate not found"    
 
-  /candidate/{candidateId}/GenerateGTKYQuiz:
+  /candidate/{candidateId}/generateGTKYQuiz:
     get:
       tags:
       - "candidate"
@@ -153,10 +100,10 @@ paths:
           schema:  
             $ref: "#/definitions/GTKYResponse"
 
-  /Picklist:
+  /picklist:
     get:
       tags:
-      - "utils"
+      - "candidate"
       operationId: getPicklist
       produces: 
       - "application/json"
@@ -176,6 +123,31 @@ paths:
           description: "successful operation"
           schema:  
             $ref: "#/definitions/Picklist"
+          
+  /candidate/{candidateId}/evaluateGTKYQuiz:
+    get:
+      tags:
+      - "candidate"
+      summary: "Evaluates the Getting to Know You Quiz"
+      operationId: "evaluateGTKYQuiz"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "candidateId"
+        in: "path"
+        required: true
+        type: string
+      - name: quizBody
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/GTKYQuizResponseInput"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/GTKYQuizResponseOutput"
+          
           
 definitions:
   Candidate:
@@ -267,7 +239,7 @@ definitions:
 
   GTKYQuestionList:
     type: object
-    title: "Question and Answers"
+    title: "Questions and Answers"
         
   GTKYAnswer:
     type: "object"
@@ -300,6 +272,36 @@ definitions:
       gtkyExpiry: 
         type: "string"
     
+ 
+  GTKYQuizResponseInput:
+    type: object
+    properties:
+      gtkyQ01: 
+        type: string
+      gtkyQ02: 
+        type: string
+      gtkyQ03: 
+        type: string
+      gtkyQ04: 
+        type: string
+      gtkyQ05: 
+        type: string
+      
+  GTKYQuizResponseOutput:
+    type: object
+    properties: 
+      status: 
+        type: string
+      message: 
+        type: string
+      gtkyExpiry: 
+        type: string
+        format: date
+      gtkyOverallBenchmark:
+        type: string
+      gtkyOverallScore: 
+        type: string
+      
  
 externalDocs:
   description: "Find out more about Swagger"
