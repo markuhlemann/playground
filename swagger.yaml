@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "This is the API definition for the Candidate Profile and Hiring Manager activities to SuccessFactors"
+  description: "This is Woolworths Candidate enrollment server."
   version: "1.0.0"
   title: "Candidate Profile"
   termsOfService: "http://swagger.io/terms/"
@@ -9,49 +9,85 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "woolworths.com.au"
+host: "wowcareers.com.au"
 basePath: "/v2"
 tags:
-- name: "candidate"
+- name: "profile"
   description: "Everything about Candidates"
-  externalDocs:
-    description: "Find out more"
-    url: "http://woolworths.com.au"
-- name: "hiringmanager"
-  description: "The Hiring Manager related services"
-  externalDocs:
-    description: "Find out more about our stores"
-    url: "http://woolworths.com.au"
 - name: "utils"
-  description: "Utility operations"
-  externalDocs:
-    description: "Find out more"
-    url: "http://woolworths.com.au"
+  description: "Utility methods, like Picklist Service"
 schemes:
 - "http"
 paths:
-  /candidate:
+  
+  /candidate/upsertCandidate:
     post:
       tags:
-      - "Candidate"
-      summary: "Upsert candidate"
-      description: "This operation is performed for inserting or updating a candidate"
+      - "candidate"
+      summary: "Create or updates candidate"
+      description: "Creates a candidate if no candidate id is provided. Update the candidate if candidate id is provided in query string."
       operationId: "upsertCandidate"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "candidateData"
+        description: "Posted candidate object"
+        required: true
+        schema:
+            $ref: "#/definitions/UpsertCandidate"
+      - name: "candidateId"
+        in: "query"
+        description: "Field name eg candidate Id"
+        required: true
+        type: string      
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"    
+          
+  /candidate/login:
+    get:
+      tags:
+      - "candidate"
+      summary: "Logs candidate into the system"
+      description: ""
+      operationId: "loginCandidate"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Create or Update candidate entity"
+      - name: "candidatename"
+        in: "query"
+        description: "The candidate name for login"
         required: true
-        schema:
-          $ref: "#/definitions/Candidate"
+        type: "string"
+      - name: "password"
+        in: "query"
+        description: "The password for login in clear text"
+        required: true
+        type: "string"
       responses:
-        default:
+        200:
           description: "successful operation"
+          schema:
+            type: "string"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the candidate"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
         400:
-          description: "Error in Candidate information"
+          description: "Invalid candidatename/password supplied"
           
   /candidate/logout:
     get:
@@ -67,7 +103,8 @@ paths:
       responses:
         default:
           description: "successful operation"        
-  /candidate/exists:
+          
+  /candidate/candidateExists:
     get:
       tags:
       - "candidate"
@@ -84,83 +121,76 @@ paths:
         type: string
       - name: "value"
         in: "query"
-        description: "Value of field eg email address"
+        description: "Value of field  eg email address"
         required: true
         type: string  
       responses:
         200:
           description: "successful operation"
           schema:  
-            $ref: "#/definitions/EmailAdd"
+            $ref: "#/definitions/ResponseData"
         400:
           description: "Invalid email supplied"
         404:
           description: "Candidate not found"    
-  /candidate/{candidatename}:
+
+  /candidate/{candidateId}/GenerateGTKYQuiz:
     get:
       tags:
       - "candidate"
-      summary: "Get candidate by candidate name"
-      description: ""
-      operationId: "getCandidateByName"
+      summary: "Generates the Getting to Know You Questions for a candidate"
+      operationId: "generateGTKYQuiz"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
-      - name: "candidatename"
+      - name: "candidateId"
         in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
         required: true
-        type: "string"
+        type: string
       responses:
         200:
           description: "successful operation"
-          schema:
-            $ref: "#/definitions/Candidate"
-        400:
-          description: "Invalid candidatename supplied"
-        404:
-          description: "Candidate not found"
+          schema:  
+            $ref: "#/definitions/GTKYResponse"
 
-  /picklist:
+  /Picklist:
     get:
       tags:
-      - "Utils"
+      - "utils"
       operationId: getPicklist
       produces: 
       - "application/json"
-      parameters: []      
+      parameters: 
+      - name: "picklistId"
+        in: "query"
+        description: "The Id of the picklist to read"
+        required: true
+        type: "string"
+      - name: "parent"
+        in: "query"
+        description: "In case it is a nested picklist, the partent Id"
+        required: false
+        type: "string"            
       responses:
         default:
           description: "successful operation"
           schema:  
             $ref: "#/definitions/Picklist"
-                  
-securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://woolworths.com.au/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify candidate in your account"
-      read:pets: "read your candidate"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
+          
 definitions:
   Candidate:
     type: "object"
     properties:
-      candidateId:
+      id:
+        type: "integer"
+        format: "int64"
+      username:
         type: "string"
       firstName:
         type: "string"
       lastName:
         type: "string"
-      primaryEmail:
-        type: "string"
-      contactEmail:
+      email:
         type: "string"
       password:
         type: "string"
@@ -173,13 +203,27 @@ definitions:
     xml:
       name: "User"
       
-  EmailAdd:
+  ResponseData:
     type: "object"
     properties:
-      email:
+      candidateId:
+        type: "string"
+      editStatus:
+        type: "string"
+      status:
+        type: "string"
+      message:
+        type: "string"  
+    xml:
+      name: "User"        
+      
+  UpsertCandidate:
+    type: "string"
+    properties:
+      candidateData:
         type: "string"
     xml:
-      name: "User"    
+      name: "User"            
  
   Picklist:
     type: "object"
@@ -202,8 +246,61 @@ definitions:
         type: string
       locale: 
         type: string
-      
-  
+
+  GTKYResponse:
+    type: object
+    properties:
+      gtkyQuizDate:
+        type: string
+        format: date
+      gtkyExpiry:
+        type: string
+        format: date
+      gtykOverallBenchmark:
+        type: string
+      gtykOverallScore:
+        type: string
+      gtykStatus:
+        type: string
+      gtkyQuestionList:
+        $ref: "#/definitions/GTKYQuestionList"
+
+  GTKYQuestionList:
+    type: object
+    title: "Question and Answers"
+        
+  GTKYAnswer:
+    type: "object"
+    properties:
+      picklistId:
+        description: "The picklist ID of the question this answer belongs to"
+        type: "string"
+      answer:
+        description: "The answer text"
+        type: "string"
+      optionId: 
+        description: "The PicklistOptionId of the answer"
+        type: "string"
+    
+  GTKYQuestion:
+    type: "object"
+    properties:
+      questionPicklistId:
+        type: "string"
+      questionText:
+        type: string
+      answers:
+        type: "array"
+        items:
+          $ref: "#/definitions/GTKYAnswer"
+    
+  GTKYQuizResult:
+    type: "object"
+    properties:
+      gtkyExpiry: 
+        type: "string"
+    
+ 
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"

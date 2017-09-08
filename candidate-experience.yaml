@@ -1,260 +1,260 @@
-swagger: '2.0'
+swagger: "2.0"
 
 # This is your document metadata
 info:
   version: "0.0.4"
-  title: Candidate Experience
+  title: "Candidate Experience"
 
 # Describe your paths here
 paths:
   /picklist:
     get:
-      description: This is my picklist service
-      operationId: getPicklist
+      description: "This is my picklist service"
+      operationId: "getPicklist"
       produces:
-        - application/json
+        - "application/json"
       parameters:
         #these are some parameters
-        - name: picklistId
-          in: query
-          description: the ID of the picklist. Can be a comma separated list
+        - name: "picklistId"
+          in: "query"
+          description: "the ID of the picklist. Can be a comma separated list"
           required: true
-          type: string  
+          type: "string"  
       responses:
         200:
-          description: successful operation
+          description: "successful operation"
           schema:
-            type: array
+            type: "array"
             items:
-              $ref: '#/definitions/Picklist'
+              $ref: "#/definitions/Picklist"
 
 
   /candidate/{id}:
     get:
-      description: Reads a candidate by the candidateId
-      operationId: getCandidate
+      description: "Reads a candidate by the candidateId"
+      operationId: "getCandidate"
       produces:
-        - application/json
+        - "application/json"
       parameters:
-        - in: path
-          name: id
-          description: Candidate ID
+        - in: "path"
+          name: "id"
+          description: "Candidate ID"
           required: true
-          type: integer 
+          type: "integer" 
       responses:
         200:
-          description: successful operation
+          description: "successful operation"
           schema:
-            type: array
+            type: "array"
             items:
-              $ref: '#/definitions/Candidate'
+              $ref: "#/definitions/Candidate"
           
   /candidate/exists:
     get:
-      description: check whether a candidate already exists
-      operationId: checkCandidate
+      description: "check whether a candidate already exists"
+      operationId: "checkCandidate"
       produces:
-        - application/json
+        - "application/json"
       parameters:
-        - in: query
-          name: email
-          description: Email of the Candidate
+        - in: "query"
+          name: "email"
+          description: "Email of the Candidate"
           required: true
-          type: string
+          type: "string"
       responses:
         200:
-          description: successful operation
+          description: "successful operation"
           schema:
-            type: boolean
+            type: "boolean"
 
   /candidate/{id}/generatequiz:
     get:
-      description: Generates new Quiz Questions for a Candidate
-      operationId: generateQuiz
+      description: "Generates new Quiz Questions for a Candidate"
+      operationId: "generateQuiz"
       produces:
-        - application/json
+        - "application/json"
       parameters:
-        - in: path
-          name: id
-          description: Candidate ID
+        - in: "path"
+          name: "id"
+          description: "Candidate ID"
           required: true
-          type: integer
+          type: "integer"
       responses:
         200:
-          description: successful operation
+          description: "successful operation"
           schema:
-            type: boolean
+            type: "boolean"
       
   /candidate/{id}/evaluatequiz:
     post:
-      description: Evaluates the score of the quiz
-      operationId: evaluateQuiz
+      description: "Evaluates the score of the quiz"
+      operationId: "evaluateQuiz"
       produces: 
-        - application/json
+        - "application/json"
       parameters: 
-        - in: path
-          name: id 
-          description: Candidate ID 
+        - in: "path"
+          name: "id" 
+          description: "Candidate ID" 
           required: true
-          type: integer
+          type: "integer"
       responses:
         200:
-          description: operation successful
+          description: "operation successful"
           schema:
-            $ref: '#/definitions/GTKYQuizResult'            
+            $ref: "#/definitions/GTKYQuizResult"            
 
 definitions:
   PicklistItem:
-    type: object
+    type: "object"
     properties:
       label:
-        type: string
+        type: "string"
       picklistId:
-        type: string
+        type: "string"
       picklistOptionId:
-        type: string
+        type: "string"
       externalCode: 
-        type: string
+        type: "string"
       locale: 
-        type: string
+        type: "string"
 
 
   Picklist:
-    type: object
+    type: "object"
     properties: 
       name: 
-        type: string
+        type: "string"
       values:
-        type: array
+        type: "array"
         items:
-          $ref: '#/definitions/PicklistItem'
+          $ref: "#/definitions/PicklistItem"
 
   PicklistOption:
-    type: object
+    type: "object"
     properties:
       id: 
-        type: string
+        type: "string"
   
   
   PreferredLocation:
-    type: object
+    type: "object"
     properties:
       state: 
-        type: string
+        type: "string"
       statePicklistId:
-        type: string
+        type: "string"
       store:
-        type: string
+        type: "string"
       storePicklistId:
-        type: string
+        type: "string"
       suburb: 
-        type: string
+        type: "string"
       suburbPicklistId:
-        type: string
+        type: "string"
         
   PreferredRole:
-    type: object
+    type: "object"
     properties:
       role:
-        type: string
+        type: "string"
 
   GTKYAnswer:
-    type: object
+    type: "object"
     properties:
       answerId:
-        type: string
+        type: "string"
       answerText: 
-        type: string
+        type: "string"
     
   GTKYQuestion:
-    type: object
+    type: "object"
     properties:
       questionId:
-        type: string
+        type: "string"
       questionText:
-        type: string
+        type: "string"
       imageLink:
-        type: string
+        type: "string"
       answers:
-        title: answers
-        type: array
+        title: "answers"
+        type: "array"
         items:
-          $ref: '#/definitions/GTKYAnswer'
+          $ref: "#/definitions/GTKYAnswer"
     
   GTKYQuizResult:
-    type: object
+    type: "object"
     properties:
       gtkyExpiry: 
-        type: string
+        type: "string"
       
 
     
   Candidate:
-    type: object
+    type: "object"
     properties:
       candidateId:
-        type: string
+        type: "string"
       address:
-        type: string
+        type: "string"
       address2:
-        type: string
+        type: "string"
       city:
-        type: string
+        type: "string"
       zip:
-        type: string
+        type: "string"
       agreeToPrivacyStatement:
-        $ref: '#/definitions/PicklistOption'
+        $ref: "#/definitions/PicklistOption"
       cellPhone:
-        type: string
+        type: "string"
       contactEmail:
-        type: string
+        type: "string"
       primaryEmail:
-        type: string
+        type: "string"
       country:
-        type: string
+        type: "string"
       creationDateTime:
-        type: string
-        format: date
+        type: "string"
+        format: "date"
       dateOfBirth:
-        type: string
-        format: date
+        type: "string"
+        format: "date"
       dateofAvailability:
-        type: string	
+        type: "string"	
       firstName:
-        type: string
+        type: "string"
       middleName:
-        type: string
+        type: "string"
       lastName:
-        type: string	
+        type: "string"	
       preferredName:
-        type: string	
+        type: "string"	
       formerEmployeeYes:
-        type: string	
+        type: "string"	
       homePhone:
-        type: string
+        type: "string"
       lastLoginDateTime:
-        type: string	
-        format: date
+        type: "string"	
+        format: "date"
       privacyAcceptDateTime:
-        type: string
-        format: date	
+        type: "string"
+        format: "date"	
       visaExpiration:	
-        type: string
-        format: date	
+        type: "string"
+        format: "date"	
       visaNumber:
-        type: string
+        type: "string"
       preferredLocations:
-        type: array
+        type: "array"
         items:
-          $ref: '#/definitions/PreferredLocation'
+          $ref: "#/definitions/PreferredLocation"
       preferredRoles:
-        type: array
+        type: "array"
         items:
-          $ref: '#/definitions/PreferredRole'
+          $ref: "#/definitions/PreferredRole"
       gtkyQuestions:
-        type: array
+        type: "array"
         items:
-          $ref: '#/definitions/GTKYQuestion'
+          $ref: "#/definitions/GTKYQuestion"
         
       
     
