@@ -1,16 +1,10 @@
 swagger: "2.0"
 info:
-  description: "This is Woolworths Candidate enrollment server."
-  version: "1.0.0"
-  title: "Candidate Profile"
-  termsOfService: "http://swagger.io/terms/"
-  contact:
-    email: "apiteam@accenture.com"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "wowcareers.com.au"
-basePath: "/v2"
+  description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
+  version: "1.0.1"
+  title: "Talent Acquisition and Onboarding"
+host: "my.wowcareers.com.au"
+basePath: "/"
 tags:
 - name: "profile"
   description: "Everything about Candidates"
