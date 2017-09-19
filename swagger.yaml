@@ -6,10 +6,10 @@ info:
 host: "my.wowcareers.com.au"
 basePath: "/"
 tags:
-- name: "profile"
-  description: "Everything about Candidates"
-- name: "utils"
-  description: "Utility methods, like Picklist Service"
+- name: "candidate"
+  description: "Everything about Candidate Profile"
+- name: "application"
+  description: "Services around the opportunities presented to the Candidate and Application"
 schemes:
 - "http"
 paths:
