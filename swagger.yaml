@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.1"
+  version: "1.0.3"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -278,6 +278,30 @@ paths:
           schema:  
             $ref: "#/definitions/Picklist"
 
+  /candidate/Picklist2/getOptionByExternalCode:
+    get:
+      tags:
+      - "candidate"
+      operationId: getPicklistOptionByExternalCode
+      produces: 
+      - "application/json"
+      parameters: 
+      - name: "picklistId"
+        in: "query"
+        description: "The Id of the picklist to read"
+        required: true
+        type: "string"
+      - name: "externalCode"
+        in: "query"
+        description: "The external code of the value to be retrieved"
+        required: false
+        type: "string"            
+      responses:
+        default:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/PicklistOption"
+            
   /candidate/Picklist2/cleanCache:
     get:
       tags:
@@ -453,12 +477,12 @@ paths:
           schema: 
             $ref: "#/definitions/InvitedRequisitionsOutput"
     
-  /candidate/application/isInterested:
+  /candidate/application/updateInterested:
     post:
       tags:
       - "application"
       summary: Updates the JobApplication with the response from the Candidat whether he is interested or not
-      operationId: isCandidateInterested
+      operationId: updateCandidateInterested
       parameters:
       - name: candidateId
         in: query
@@ -770,8 +794,6 @@ definitions:
       retakeGTKYTest:
         type: boolean
       missingWorkingPreferences:
-        type: boolean
-      missingExperience:
         type: boolean
       applications:
         type: array
