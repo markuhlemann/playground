@@ -50,6 +50,65 @@ paths:
           description: "Invalid email supplied"
         404:
           description: "Candidate not found"    
+  
+  /candidate/resetPassword:
+    post:
+      tags:
+      - "candidate"
+      summary: "Resets the password of the candidate on the Candidate Entity"
+      operationId: "resetPassword"
+      parameters:
+      - name: "candidateId"
+        in: "query"
+        description: "Field name candidate Id"
+        required: true
+        type: string      
+      - name: "password"
+        in: "body"
+        description: "The password to reset"
+        required: true
+        schema:
+          $ref: "#/definitions/CandidatePassword"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"    
+  
+  /candidate/upsertPreferredStores:
+    post:
+      tags:
+      - "candidate"
+      summary: "Updates candidate Preferred Stores"
+      description: "Update the candidate Preferred Stores."
+      operationId: "upsertPreferredStores"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "candidateData"
+        description: "Posted candidate object"
+        required: true
+        schema:
+            $ref: "#/definitions/UpsertCandidate"
+      - name: "candidateId"
+        in: "query"
+        description: "Field name eg candidate Id"
+        required: true
+        type: string      
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"    
           
   /candidate/candidateExists:
     get:
@@ -79,28 +138,129 @@ paths:
         400:
           description: "Invalid email supplied"
         404:
-          description: "Candidate not found"    
-
-  /candidate/{candidateId}/generateGTKYQuiz:
+          description: "Candidate not found" 
+  
+  /candidate/myToDoList:
     get:
       tags:
       - "candidate"
-      summary: "Generates the Getting to Know You Questions for a candidate"
-      operationId: "generateGTKYQuiz"
+      summary: "Get candidates To Do List"
+      description: Get candidates To Do data from SF
+      operationId: myToDoList
       produces:
       - "application/json"
       parameters:
       - name: "candidateId"
-        in: "path"
+        in: "query"
+        description: "Field candidateId to retrieve candidate data"
         required: true
         type: string
       responses:
         200:
           description: "successful operation"
           schema:  
-            $ref: "#/definitions/GTKYResponse"
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"            
 
-  /picklist:
+  /candidate/uploadResume:
+    post:
+      tags:
+      - "candidate"
+      summary: "Uploads the candidate Resume"
+      description: "Uploads the candidate Resume."
+      operationId: "uploadResume"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "formData"
+        name: "attachment"
+        description: "File Attachment"
+        required: true
+        type: file
+      - name: "candidateId"
+        in: "query"
+        description: "Field name eg candidate Id"
+        required: true
+        type: string      
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid candidate id supplied"
+        404:
+          description: "Candidate not found"   
+  
+  /candidate/fileDownload:
+    get:
+      tags:
+      - "candidate"
+      summary: "Downloads a file from server"
+      description: "Downloads a file from server"
+      operationId: "fileDownload"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/octet-stream"
+      parameters:
+      - name: "candidateId"
+        in: "query"
+        description: "Field name eg candidate Id"
+        required: true
+        type: string
+      - name: "module"
+        in: "query"
+        description: "Type of attachment to download"
+        required: true
+        type: string        
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: file
+        400:
+          description: "Invalid candidate id or module name supplied"
+        404:
+          description: "Candidate or module not found"   
+          
+  /candidate/upsertAvatar:
+    post:
+      tags:
+      - "candidate"
+      summary: "Uploads the Avatar profile image to the Candidate Entity"
+      operationId: "upsertAvatar"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "formData"
+        name: "attachment"
+        description: "File Attachment"
+        required: true
+        type: file
+      - name: "candidateId"
+        in: "query"
+        description: "Field name eg candidate Id"
+        required: true
+        type: string      
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid candidate id supplied"
+        404:
+          description: "Candidate not found"    
+
+  /candidate/Picklist2:
     get:
       tags:
       - "candidate"
@@ -123,9 +283,41 @@ paths:
           description: "successful operation"
           schema:  
             $ref: "#/definitions/Picklist"
-          
-  /candidate/{candidateId}/evaluateGTKYQuiz:
+
+  /candidate/Picklist2/cleanCache:
     get:
+      tags:
+      - "candidate"
+      operationId: cleanPicklistCache
+      description: "Cleans the Picklist cache"
+      responses:
+        default:
+          description: "successful operation"
+          
+
+  /candidate/GenerateGTKYQuiz: 
+    get:
+      tags:
+      - "candidate"
+      summary: "Generates the Getting to Know You Questions for a candidate"
+      operationId: "generateGTKYQuiz"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "candidateId"
+        in: "query"
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: object
+#          schema:  
+#            $ref: "#/definitions/GTKYResponse"
+          
+  /candidate/evaluateGTKYQuiz:
+    post:
       tags:
       - "candidate"
       summary: "Evaluates the Getting to Know You Quiz"
@@ -134,47 +326,170 @@ paths:
       - "application/json"
       parameters:
       - name: "candidateId"
-        in: "path"
+        in: "query"
         required: true
         type: string
       - name: quizBody
         in: body
         required: true
         schema:
-          $ref: "#/definitions/GTKYQuizResponseInput"
+          type: string
+#          $ref: "#/definitions/GTKYQuizResponseInput"
       responses:
         200:
           description: "successful operation"
           schema:  
-            $ref: "#/definitions/GTKYQuizResponseOutput"
+            type: object
+#            $ref: "#/definitions/GTKYQuizResponseOutput"
           
-          
-definitions:
-  Candidate:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      username:
-        type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
+
+  /candidate/version:
+    get:
+      tags:
+      - "candidate"
+      summary: "Returns the version of the API layer"
+      operationId: getVersion
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: string
+
+
+  /candidate/CandidateSummary:
+    get:
+      tags:
+      - "candidate"
+      summary: "Retrieving information for the Candidate"
+      operationId: getCandidateSummary
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/CandidateSummaryBody"
+
+  /candidate/CandidateHeader:
+    get:
+      tags:
+      - "candidate"
+      summary: "Retrieving only the Header information of a Candidate (Firstname, Lastname)"
+      operationId: getCandidateHeader
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/CandidateHeader" 
       
+            
+  /candidate/application/getAgenda:
+    get:
+      tags:
+      - "application"
+      summary: Retrieves the Agenda information for the Candidate
+      operationId: getAgenda
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/CandidateAgenda"
+        400: 
+          description: "Candidate not scheduled for any interviews"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
+
+  /candidate/application/getStage:
+    get:
+      tags:
+      - "application"
+      summary: Retrieves the Stage of the Candidate
+      operationId: getStage
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/CandidateStage"
+
+  /candidate/getInvitedRequisitions:
+    get:
+      tags:
+      - "candidate"
+      summary: Retrieves the list of Requisitions to which the Candidate is invited to apply
+      operationId: getInvitedRequisitions
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/InvitedRequisitionsOutput"
+    
+  /candidate/application/isInterested:
+    post:
+      tags:
+      - "application"
+      summary: Updates the JobApplication with the response from the Candidat whether he is interested or not
+      operationId: isCandidateInterested
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      - name: applicationData
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/ApplicationInterestInput"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Update of JobApplication failed"
+          schema: 
+            $ref: "#/definitions/ResponseData"
+    
+    
+definitions:
+
   ResponseData:
     type: "object"
     properties:
@@ -218,64 +533,28 @@ definitions:
         type: string
       locale: 
         type: string
-
-  GTKYResponse:
-    type: object
-    properties:
-      gtkyQuizDate:
-        type: string
-        format: date
-      gtkyExpiry:
-        type: string
-        format: date
-      gtykOverallBenchmark:
-        type: string
-      gtykOverallScore:
-        type: string
-      gtykStatus:
-        type: string
-      gtkyQuestionList:
-        $ref: "#/definitions/GTKYQuestionList"
-
-  GTKYQuestionList:
-    type: object
-    title: "Questions and Answers"
         
-  GTKYAnswer:
-    type: "object"
+  PicklistOptionWithBGElement:
+    type: object
     properties:
-      picklistId:
-        description: "The picklist ID of the question this answer belongs to"
-        type: "string"
-      answer:
-        description: "The answer text"
-        type: "string"
-      optionId: 
-        description: "The PicklistOptionId of the answer"
-        type: "string"
-    
-  GTKYQuestion:
-    type: "object"
-    properties:
-      questionPicklistId:
-        type: "string"
-      questionText:
+      backgroundElementId:
         type: string
-      answers:
-        type: "array"
-        items:
-          $ref: "#/definitions/GTKYAnswer"
-    
-  GTKYQuizResult:
-    type: "object"
-    properties:
-      gtkyExpiry: 
-        type: "string"
-    
- 
+      label:
+        type: string
+      picklistId:
+        type: string
+      picklistOptionId:
+        type: string
+      externalCode:
+        type: string
+      locale: 
+        type: string      
+
   GTKYQuizResponseInput:
     type: object
     properties:
+      candidateId:
+        type: string
       gtkyQ01: 
         type: string
       gtkyQ02: 
@@ -296,13 +575,279 @@ definitions:
         type: string
       gtkyExpiry: 
         type: string
-        format: date
+#        format: date
       gtkyOverallBenchmark:
         type: string
       gtkyOverallScore: 
         type: string
+      gtkyBenchmarkMet:
+        type: boolean
+
+  CandidateSummaryBody:
+    type: object
+    properties:
+      candidateId:
+        type: string
+      firstName: 
+        type: string
+      lastName:
+        type: string
+      preferredName: 
+        type: string
+      address: 
+        type: string
+      address2:
+        type: string
+      zip:
+        type: string
+      cellPhone:
+        type: string
+      homePhone:
+        type: string
+      candInterest:
+        type: string
+      phoneCountryCode1:
+        $ref: "#/definitions/PicklistOption"
+      candGoals:
+        type: string
+      city:
+        type: string
+      contactEmail:
+        type: string
+      primaryEmail:
+        type: string
+      country:
+        type: string
+      hoursPerWeek:
+        type: string
+      formerEmployeeYes:
+        type: string
+      dateOfBirth:
+        type: string
+      profileFileName:
+        type: string
+      state:
+        $ref: "#/definitions/PicklistOption"
+      workRight:
+        $ref: "#/definitions/PicklistOption"
+      phoneCountryCodeAlt:
+        $ref: "#/definitions/PicklistOption"
+      race:
+        $ref: "#/definitions/PicklistOption"
+      title:
+        $ref: "#/definitions/PicklistOption"
+      criminalConviction:
+        $ref: "#/definitions/PicklistOption"
+      candAvailability:
+        $ref: "#/definitions/CandAvailability"
+      preferredRoles:
+        $ref: "#/definitions/PreferredRolesWithBGElement"
+      stores:
+        $ref: "#/definitions/PreferredStores"
+      outsideWorkExperience:
+        $ref: "#/definitions/OutsideWorkExperience"
+      previousEmployee:
+        $ref: "#/definitions/PicklistOption"
+      disability:
+        $ref: "#/definitions/PicklistOption"
+      gender:
+        $ref: "#/definitions/PicklistOption"
+
+  CandidateHeader:
+    type: object
+    properties:
+      candidateId:
+        type: string
+      firstName: 
+        type: string
+      lastName:
+        type: string
+      preferredName: 
+        type: string
+      fullName:
+        type: string
+  
+        
+  CandAvailability:
+    type: array
+    title: results
+    items:
+      $ref: "#/definitions/CandAvailabiltiyItem"
+  
+  
+  CandAvailabiltiyItem:
+    type: object
+    properties:
+      weekDay: 
+        $ref: "#/definitions/PicklistOptionWithBGElement"
+      times:
+        type: array
+        title: times
+        items:
+          $ref: "#/definitions/PicklistOptionWithBGElement"  
+        
+  
+
+  PreferredRoles:
+    type: array
+    title: results
+    items:
+      $ref: "#/definitions/PicklistOption"
+
+  PreferredRolesWithBGElement:
+    type: array
+    title: results
+    items:
+      $ref: "#/definitions/PicklistOptionWithBGElement"    
+                
+  PreferredStores:
+    type: array
+    title: results
+    items:
+      $ref: "#/definitions/PreferredStoresItem"
+    
+  PreferredStoresItem:
+    type: object
+    properties:
+      backgroundElementId:
+        type: string
+      state:
+        type: string
+      suburb:
+        type: string
+      number:
+        type: string
+      postcode:
+        type: string
+      name:
+        type: string
+  
+  OutsideWorkExperienceItem:
+    type: object
+    properties:
+      backgroundElementId:
+        type: string
+      startTitle:
+        type: string
+      employer:
+        type: string
+      jobBrief:
+        type: string
+      startDate:
+        type: string
+#        format: date
+      endDate:
+        type: string
+#        format: date
+        
+  OutsideWorkExperience:
+    type: array
+    title: results
+    items:
+      $ref: "#/definitions/OutsideWorkExperienceItem"
       
- 
+
+  CandidateAgenda:
+    type: object
+    properties:
+      roleName:
+        description: "to be read from the External Title of the Job Requisition"
+        type: string
+      startDate: 
+        type: string
+      interviewTime: 
+        type: string
+      interviewer:
+        type: string
+      interviewerRole:
+        type: string
+      status:
+        type: string
+      notes:
+        description: "to be used for indicating the store location"
+        type: string
+      locationAddress:
+        type: string
+      
+
+  CandidateStage:
+    type: object
+    properties:
+      retakeGTKYTest:
+        type: boolean
+      missingWorkingPreferences:
+        type: boolean
+      missingExperience:
+        type: boolean
+      applications:
+        type: array
+        items:
+          $ref: "#/definitions/ApplicationDetails"
+
+
+  ApplicationDetails:
+    type: object
+    properties:
+      applicationId: 
+        type: string
+      requisitionId:
+        type: string
+      jobTitle:
+        type: string
+      hiringManager: 
+        type: string
+      location:
+        type: string
+      date:
+        type: string
+      state:
+        type: string
+      
+  ApplicationInterestInput:
+    type: object
+    properties:
+      candidateId:
+        type: string
+      requisitionId: 
+        type: string
+      interestedInRole:
+        type: boolean
+      notInterestedReason:
+        description: "Only needs to be specified in case the Candidate is rejecting"
+        $ref: "#/definitions/PicklistOption"
+      notInterestedComment:
+        description: "Optional field for comments by the candidate"
+        type: string
+      candidateInterest:
+        description: "Set if the Candidate is still interested in Roles"
+        type: boolean
+      
+
+  CandidatePassword:
+    type: object
+    properties:
+      password:
+        type: string
+        format: password
+        
+  InvitedRequisitionsOutput:
+    type: array
+    items:
+      $ref: "#/definitions/InvitedRequisition"
+
+  InvitedRequisition:
+    type: object
+    properties:
+      requisitionId:
+        type: string
+      requisitionTitle:
+        type: string
+      hiringManager:
+        type: string
+      store:
+        type: string
+    
+
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
