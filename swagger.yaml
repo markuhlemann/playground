@@ -613,10 +613,11 @@ paths:
         in: query
         required: true
         type: string
-      - name: applicationId
-        in: query
+      - name: offerData
+        in: body
         required: true
-        type: string
+        schema:
+          $ref: "#/definitions/OfferAcceptedInput"
       produces:
       - "application/json"
       responses:
@@ -641,11 +642,7 @@ paths:
         in: query
         required: true
         type: string
-      - name: applicationId
-        in: query
-        required: true
-        type: string
-      - name: applicationData
+      - name: offerData
         in: body
         required: true
         schema:
@@ -1012,7 +1009,7 @@ definitions:
       applicationId: 
         type: string
       notInterestedReason:
-        description: "Only needs to be specified in case the Candidate is rejecting"
+        description: "Only needs to be specified in case the Candidate is rejecting. This only requires the picklistOptionId"
         $ref: "#/definitions/PicklistOption"
       notInterestedComment:
         description: "Optional field for comments by the candidate"
@@ -1020,6 +1017,22 @@ definitions:
       interestedInFurtherRoles:
         description: "Set if the Candidate is still interested in Roles"
         type: boolean
+  
+  OfferAcceptedInput:
+    type: object
+    properties:
+      candidateId: 
+        type: string
+      applicationId: 
+        type: string
+      dateOfBirth:
+        type: string
+      gender:
+        description: this only requires the picklistOptionId
+        $ref: "#/definitions/PicklistOption"
+      disability:
+        description: this only requires the picklistOptionId
+        $ref: "#/definitions/PicklistOption"
   
   CandidatePassword:
     type: object
