@@ -496,11 +496,10 @@ paths:
         in: query
         required: true
         type: string
-      - name: applicationData
-        in: body
+      - name: requisitionId
+        in: query
         required: true
-        schema:
-          $ref: "#/definitions/CandidateInterestedInput"
+        type: string
       produces:
       - "application/json"
       responses:
@@ -601,6 +600,68 @@ paths:
           description: "Update of JobApplication failed"
           schema: 
             $ref: "#/definitions/ResponseData"
+
+
+  /candidate/application/offerAccepted:
+    post:
+      tags:
+      - "application"
+      summary: The Candidate accepts the offer that is extended to him
+      operationId: acceptOffer
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      - name: applicationId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Creation of JobApplication failed"
+          schema: 
+            $ref: "#/definitions/ResponseData"
+
+
+  /candidate/application/offerDeclined:
+    post:
+      tags:
+      - "application"
+      summary: Declines the offer that has been extended to the candidate and updates SF with additional comments
+      operationId: declineOffer
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      - name: applicationId
+        in: query
+        required: true
+        type: string
+      - name: applicationData
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/OfferNotAcceptedInput"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Update of JobApplication failed"
+          schema: 
+            $ref: "#/definitions/ResponseData"
+
 
 ############################################################################################################
 ############################################################################################################
@@ -943,15 +1004,23 @@ definitions:
         description: "Set if the Candidate is still interested in Roles"
         type: boolean
   
-  CandidateInterestedInput:
+  OfferNotAcceptedInput:
     type: object
     properties:
       candidateId:
         type: string
-      requisitionId: 
+      applicationId: 
         type: string
-      
-
+      notInterestedReason:
+        description: "Only needs to be specified in case the Candidate is rejecting"
+        $ref: "#/definitions/PicklistOption"
+      notInterestedComment:
+        description: "Optional field for comments by the candidate"
+        type: string
+      interestedInFurtherRoles:
+        description: "Set if the Candidate is still interested in Roles"
+        type: boolean
+  
   CandidatePassword:
     type: object
     properties:
