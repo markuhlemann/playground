@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.4"
+  version: "1.0.5"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -141,21 +141,20 @@ paths:
       tags:
       - "candidate"
       summary: "Get candidates To Do List"
-      description: Get candidates To Do data from SF
+      description: "Get candidates To Do data from SF according to the Stage"
       operationId: myToDoList
       produces:
       - "application/json"
       parameters:
-      - name: "candidateId"
-        in: "query"
-        description: "Field candidateId to retrieve candidate data"
+      - name: candidateId
+        in: query
         required: true
         type: string
       responses:
         200:
           description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
+          schema: 
+            $ref: "#/definitions/MyToDoList"
         400:
           description: "Invalid email supplied"
         404:
@@ -224,6 +223,49 @@ paths:
           description: "Invalid candidate id or module name supplied"
         404:
           description: "Candidate or module not found"   
+
+  /candidate/uploadSupportingDocument:
+    post:
+      tags:
+      - "candidate"
+      summary: "Uploads the supporting document"
+      description: "Uploads the supporting document."
+      operationId: "uploadSupportingDocument"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "candidateId"
+        description: "Candidate Id"
+        required: true
+        type: string
+      - in: "formData"
+        name: "rightToWorkDoc"
+        description: "Right to Work document"
+        required: false
+        type: file
+      - in: "formData"
+        name: "tradeCertificateDoc"
+        description: "Trade Certificate Attachment"
+        required: false
+        type: file
+      - in: "formData"
+        name: "driverLicenseDoc"
+        description: "Forklift Driver’s License Attachment"
+        required: false
+        type: file
+      - in: "formData"
+        name: "responsibleServiceAlcoholDoc"
+        description: "Responsible Service of Alcohol"
+        required: false
+        type: file
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
           
   /candidate/upsertAvatar:
     post:
@@ -964,7 +1006,24 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/ApplicationDetails"
-
+          
+  MyToDoList:
+    type: object
+    properties:
+      retakeGTKYTest:
+        type: boolean
+      newGTKYTest:
+        type: boolean
+      missingWorkHistory:
+        type: boolean
+      missingWorkingPreferences:
+        type: boolean
+      date:
+        type: string
+      applications:
+        type: array
+        items:
+          $ref: "#/definitions/ApplicationDetails"
 
   ApplicationDetails:
     type: object
