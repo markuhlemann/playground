@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.6"
+  version: "1.0.7"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -51,6 +51,8 @@ paths:
       - "candidate"
       summary: "Resets the password of the candidate on the Candidate Entity"
       operationId: "resetPassword"
+      consumes:
+      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -550,7 +552,6 @@ paths:
           schema: 
             $ref: "#/definitions/ResponseData"
 
-
   /candidate/application/candidateIsNotInterested:
     post:
       tags:
@@ -613,6 +614,8 @@ paths:
       - "application"
       summary: Updates the comments section before sending the candidate to the Hire for Attitude test
       operationId: postHFATestQuestion
+      produces:
+      - application/json
       parameters:
       - name: candidateId
         in: query
@@ -622,13 +625,11 @@ paths:
         in: query
         required: true
         type: string
-      - name: comment
+      - name: updateHFAInput
         in: body
         required: true
         schema:
-          type: string
-      produces:
-      - "application/json"
+          $ref: "#/definitions/HFAUpdateInput"
       responses:
         200:
           description: "successful operation"
@@ -932,6 +933,8 @@ definitions:
         type: string
       number:
         type: string
+      store:
+        type: string
       postcode:
         type: string
       name:
@@ -1120,6 +1123,13 @@ definitions:
     properties:
       hfaLink: 
         type: string
+        
+  HFAUpdateInput:
+    type: object
+    properties:
+      comment:
+        type: string
+      
         
 externalDocs:
   description: "Find out more about Swagger"
