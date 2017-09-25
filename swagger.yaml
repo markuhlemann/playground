@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.7"
+  version: "1.0.8"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -10,8 +10,6 @@ tags:
   description: "Everything about Candidate Profile"
 - name: "application"
   description: "Services around the opportunities presented to the Candidate and Application"
-- name: "hiringmanager"
-  description: "Services around the Hiring Manager experience"
 schemes:
 - "http"
 paths:
@@ -243,6 +241,11 @@ paths:
       - in: "query"
         name: "candidateId"
         description: "Candidate Id"
+        required: true
+        type: string
+      - in: "query"
+        name: "reqDocType"
+        description: "Required Document Type"
         required: true
         type: string
       - in: "formData"
@@ -520,6 +523,30 @@ paths:
           description: "successful operation"
           schema: 
             $ref: "#/definitions/InvitedRequisitionsOutput"
+            
+  /candidate/getInvitedRequisitionDetails:
+    get:
+      tags:
+      - "candidate"
+      summary: Retrieves the details of the requisition the candidate is invited to
+      operationId: getInvitedRequisitionDetails
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      - name: requisitionId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/InvitedRequisition"
+            
 
 ############################################################################################################
 ############################################################################################################
@@ -699,34 +726,6 @@ paths:
           description: "Update of JobApplication failed"
           schema: 
             $ref: "#/definitions/ResponseData"
-
-
-############################################################################################################
-############################################################################################################
-########################################### Hiring Manager Operations ######################################
-############################################################################################################
-############################################################################################################
-
-  /hm/searchCandidate:
-    post:
-      tags:
-      - "hiringmanager"
-      summary: "Allows the hiring manager to search for candidates based on firstname, lastname, email and phone"
-      operationId: searchCandidate
-      parameters:
-      - name: searchData
-        in: body
-        required: true
-        schema:
-          $ref: "#/definitions/CandidateSearchInput"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/CandidateSearchResult"
-      
 
 
 ############################################################################################################
@@ -912,7 +911,8 @@ definitions:
         type: string
       fullName:
         type: string
-
+  
+        
   CandAvailability:
     type: array
     title: results
@@ -1142,6 +1142,8 @@ definitions:
         type: string
       requisitionTitle:
         type: string
+      requisitionDescription:
+        type: string
       hiringManager:
         type: string
       store:
@@ -1159,45 +1161,7 @@ definitions:
       comment:
         type: string
       
-  KeyValuePair:
-    type: object
-    properties:
-      key: 
-        type: string
-      value:
-        type: string
-  
-  CandidateSearchInput:
-    type: array
-    items:
-      $ref: '#/definitions/KeyValuePair'
-
-  CandidateSearchResult:
-    type: object
-    properties:
-      candidateId:
-        type: string
-      firstName: 
-        type: string
-      lastName:
-        type: string
-      preferredName: 
-        type: string
-      fullName:
-        type: string
-      email:
-        type: string
-      address: 
-        type: string
-      phone:
-        type: string
         
-    CandidateSearchResultList:
-      type: array
-      items:
-        $ref: "#/definitions/CandidateSearchResult"
-      
-
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
