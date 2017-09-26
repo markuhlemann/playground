@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.8"
+  version: "1.0.11"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -27,7 +27,7 @@ paths:
       - in: "body"
         name: "candidateData"
         description: "Posted candidate object"
-        required: true
+        required: true 
         schema:
             $ref: "#/definitions/UpsertCandidate"
       - name: "candidateId"
@@ -211,7 +211,17 @@ paths:
         description: "Field name eg candidate Id"
         required: true
         type: string
+      - name: "applicationId"
+        in: "query"
+        description: "The application Id for which to download the files"
+        required: true
+        type: string
       - name: "module"
+        in: "query"
+        description: "Type of attachment to download"
+        required: true
+        type: string        
+      - name: "fileType"
         in: "query"
         description: "Type of attachment to download"
         required: true
@@ -241,6 +251,11 @@ paths:
       - in: "query"
         name: "candidateId"
         description: "Candidate Id"
+        required: true
+        type: string
+      - in: "query"
+        name: "applicationId"
+        description: "Application Id"
         required: true
         type: string
       - in: "query"
@@ -523,29 +538,6 @@ paths:
           description: "successful operation"
           schema: 
             $ref: "#/definitions/InvitedRequisitionsOutput"
-            
-  /candidate/getInvitedRequisitionDetails:
-    get:
-      tags:
-      - "candidate"
-      summary: Retrieves the details of the requisition the candidate is invited to
-      operationId: getInvitedRequisitionDetails
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      - name: requisitionId
-        in: query
-        required: true
-        type: string
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/InvitedRequisition"
             
 
 ############################################################################################################
@@ -897,6 +889,8 @@ definitions:
         $ref: "#/definitions/PicklistOption"
       gender:
         $ref: "#/definitions/PicklistOption"
+      sendEmail:
+        $ref: "#/definitions/PicklistOption"
 
   CandidateHeader:
     type: object
@@ -1063,6 +1057,8 @@ definitions:
       requisitionId:
         type: string
       jobTitle:
+        type: string
+      jobDescription:
         type: string
       hiringManager: 
         type: string
