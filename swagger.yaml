@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.11"
+  version: "1.0.12"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -377,6 +377,8 @@ paths:
       responses:
         default:
           description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
           
 
   /candidate/GenerateGTKYQuiz: 
@@ -719,12 +721,40 @@ paths:
           schema: 
             $ref: "#/definitions/ResponseData"
 
+#######################################################################################################
+#######################################################################################################
+############################################ Hiring Manager ###########################################
+#######################################################################################################
+#######################################################################################################
 
-############################################################################################################
-############################################################################################################
-############################################ Definitions ###################################################
-############################################################################################################
-############################################################################################################
+  /hm/searchCandidate:
+    post:
+      tags:
+        - hiringmanager
+      summary: >-
+        Allows the hiring manager to search for candidates based on firstname,
+        lastname, email and phone
+      operationId: searchCandidate
+      parameters:
+        - name: searchData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CandidateSearchInput'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/CandidateSearchResultList'
+            
+            
+#######################################################################################################
+#######################################################################################################
+############################################ Definitions ##############################################
+#######################################################################################################
+#######################################################################################################
 
 definitions:
   ResponseData:
@@ -1156,7 +1186,48 @@ definitions:
     properties:
       comment:
         type: string
-      
+
+  CandidateSearchResult:
+    type: object
+    properties:
+      candidateId:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      preferredName:
+        type: string
+      fullName:
+        type: string
+      email:
+        type: string
+      address:
+        type: string
+      phone:
+        type: string
+        
+  CandidateSearchResultList:
+    type: object
+    properties:
+      searchCriteria:
+        $ref: '#/definitions/CandidateSearchInput'
+      hasmore:
+        type: boolean
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/CandidateSearchResult'
+          
+  CandidateSearchInput:
+    type: object
+    properties:
+      currentPage:
+        type: string
+      searchkey:
+        type: string
+      searchvalue:
+        type: string      
         
 externalDocs:
   description: "Find out more about Swagger"
