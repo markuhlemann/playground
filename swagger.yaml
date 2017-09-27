@@ -1224,11 +1224,20 @@ definitions:
     properties:
       currentPage:
         type: string
-      searchkey:
+      searchInput:
+        type: array
+        items:
+          $ref: "#/definitions/KeyValue"
+
+  
+  KeyValue:
+    type: object
+    properties:
+      key:
         type: string
-      searchvalue:
-        type: string      
-        
+      value:
+        type: string
+  
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
