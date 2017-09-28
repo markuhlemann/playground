@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.13"
+  version: "1.0.14"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -27,7 +27,7 @@ paths:
       - in: "body"
         name: "candidateData"
         description: "Posted candidate object"
-        required: true  
+        required: true 
         schema:
             $ref: "#/definitions/UpsertCandidate"
       - name: "candidateId"
@@ -561,11 +561,11 @@ paths:
             $ref: "#/definitions/InvitedRequisitionsOutput"
             
 
-############################################################################################################
-############################################################################################################
-########################################### Application Operations #########################################
-############################################################################################################
-############################################################################################################
+#######################################################################################################
+#######################################################################################################
+########################################### Application Operations ####################################
+#######################################################################################################
+#######################################################################################################
     
   /candidate/application/candidateIsInterested:
     post:
@@ -794,18 +794,63 @@ paths:
               properties:
                 role:
                   type: string
-                interviewdate:
+                interviewDate:
                   type: string
                 fullname: 
                   type: string
                 candidateId: 
                   type: string
-                req:
+                applicationId:
+                  type: string
+                requisitionId:
                   type: string
                 completed:
                   type: boolean
-            
-            
+
+  /hm/getInterviewSummary:
+    get:
+      tags:
+      - "hiringmanager"
+      summary: "Retrieves the details for the candidate interview details"
+      operationId: getInterviewSummary
+      parameters:
+      - name: applicationId
+        in: query
+        required: true
+        type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            title: interviewSummary
+            type: object
+            properties:
+              jobTitle: 
+                type: string
+              requisitionId:
+                type: string
+              applicationId:
+                type: string
+              gtkyPassed:
+                type: boolean
+              gtkyScore:
+                type: string
+              gtkyDate:
+                type: string
+              interests:
+                type: string
+              goals:
+                type: string
+              wooliesFitScore:
+                type: string
+              wooliesFitBenchmark:
+                type: string
+              wooliesFitDate:
+                type: string
+
+
 #######################################################################################################
 #######################################################################################################
 ############################################ Definitions ##############################################
@@ -1283,8 +1328,6 @@ definitions:
     properties:
       searchCriteria:
         $ref: '#/definitions/CandidateSearchInput'
-      hasmore:
-        type: boolean
       results:
         type: array
         items:
@@ -1307,7 +1350,8 @@ definitions:
         type: string
       value:
         type: string
-  
+        
+
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
