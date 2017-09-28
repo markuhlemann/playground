@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.14"
+  version: "1.0.16"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -802,6 +802,8 @@ paths:
                   type: string
                 applicationId:
                   type: string
+                interviewId:
+                  type: string
                 requisitionId:
                   type: string
                 completed:
@@ -833,6 +835,8 @@ paths:
                 type: string
               applicationId:
                 type: string
+              interviewId:
+                type: string
               gtkyPassed:
                 type: boolean
               gtkyScore:
@@ -849,6 +853,65 @@ paths:
                 type: string
               wooliesFitDate:
                 type: string
+
+  /hm/getAssessmentDetails:
+    get:
+      tags:
+      - "hiringmanager"
+      summary: "Retrieves the test details for GTKY and the Woolies Fit test"
+      operationId: getAssessmentDetails
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            title: Assessment
+            type: object
+            properties:
+              gtkyAnswers:
+                type: array
+                items:
+                  $ref: "#/definitions/GTKYAnswer"
+              wooliesFitTest:
+                $ref: "#/definitions/WooliesFitResult"
+
+  
+  /hm/getCandidateExperience:
+    get:
+      tags:
+      - "hiringmanager"
+      summary: "Retrieves the work experience for the candidate"
+      operationId: getCandidateExperience
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            title: CandidateExperience
+            type: object
+            properties:
+              hadPreviousExprience:
+                type: boolean
+              workedAtWow:
+                type: boolean
+              formerEmployeeId:
+                type: string
+              cvAttachmentId:
+                type: string
+              outsideWorkExperience:
+                $ref: "#/definitions/OutsideWorkExperience"
 
 
 #######################################################################################################
@@ -1351,7 +1414,50 @@ definitions:
       value:
         type: string
         
-
+  
+  GTKYAnswer:
+    type: object
+    properties:
+      questionId:
+        type: string
+      questionText: 
+        type: string
+      answerId: 
+        type: string
+      answerText:
+        type: string
+      answerWeight: 
+        type: string
+  
+  WooliesFitMeasure:
+    type: object
+    properties:
+      band: 
+        type: string
+      score:
+        type: string
+      measureNumber:
+        type: string
+      measureText:
+        type: string
+        
+  WooliesFitResult:
+    type: object
+    properties:
+      testDate:
+        type: string
+      orderId:
+        type: string
+      overallBenchmark: 
+        type: string
+      overallScore:
+        type: string
+      measures:
+        type: array
+        items:
+          $ref: "#/definitions/WooliesFitMeasure"
+      
+  
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
