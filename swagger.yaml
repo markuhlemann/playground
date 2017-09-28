@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.17"
+  version: "1.0.18"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -1521,6 +1521,8 @@ definitions:
       location:
         type: string
       interviewComments:
+        type: string
+      interviewer:
         type: string
       
   CandidateActivityList:
