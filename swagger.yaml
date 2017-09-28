@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.12"
+  version: "1.0.13"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -27,7 +27,7 @@ paths:
       - in: "body"
         name: "candidateData"
         description: "Posted candidate object"
-        required: true 
+        required: true  
         schema:
             $ref: "#/definitions/UpsertCandidate"
       - name: "candidateId"
@@ -792,16 +792,18 @@ paths:
               title: interview
               type: object
               properties:
-                jobtitle:
+                role:
                   type: string
                 interviewdate:
                   type: string
-                candidateName: 
+                fullname: 
                   type: string
                 candidateId: 
                   type: string
-                requisitionId:
+                req:
                   type: string
+                completed:
+                  type: boolean
             
             
 #######################################################################################################
@@ -1095,7 +1097,6 @@ definitions:
         type: string
       locationAddress:
         type: string
-      
 
   CandidateStage:
     type: object
