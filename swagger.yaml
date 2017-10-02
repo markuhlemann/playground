@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.18"
+  version: "1.0.20"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -288,26 +288,7 @@ paths:
           description: "successful operation"
           schema:  
             $ref: "#/definitions/ResponseData"
-  
-  /candidate/fileDownloadList:
-    get:
-      tags:
-      - "candidate"
-      summary: List of items that can be downloaded
-      operationId: getFileDownloadList
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/FilesToDownloadList"
-          
+
   /candidate/upsertAvatar:
     post:
       tags:
@@ -871,6 +852,14 @@ paths:
             title: Assessment
             type: object
             properties:
+              gtkyStatus:
+                $ref: "#/definitions/PicklistOption"
+              gtkyOverallScore: 
+                type: string
+              gtkyOverallBenchmark:
+                $ref: "#/definitions/PicklistOption"
+              gtkyDate:
+                type: string
               gtkyAnswers:
                 type: array
                 items:
@@ -966,8 +955,54 @@ paths:
           description: successful operation
           schema: 
             $ref: "#/definitions/ResponseData"
+            
+  /hm/getJobInfoToApplication:
+    get:
+      tags:
+      - "hiringmanager"
+      summary: "Retrieves the Job information to an application"
+      operationId: getJobInformation
+      parameters:
+      - name: applicationId
+        in: query
+        required: true
+        type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            title: JobInformation
+            type: object
+            properties:
+              requisitionId:
+                type: string
+              jobTitle:
+                type: string
+              store:
+                type: string
+      
 
-
+  /hm/fileDownloadList:
+    get:
+      tags:
+      - "hiringmanager"
+      summary: List of items that can be downloaded
+      operationId: getFileDownloadList
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/FilesToDownloadList"
+          
 #######################################################################################################
 #######################################################################################################
 ############################################ Definitions ##############################################
@@ -1477,9 +1512,7 @@ definitions:
       questionText: 
         type: string
       answerId: 
-        type: string
-      answerText:
-        type: string
+        $ref: "#/definitions/PicklistOption"
       answerWeight: 
         type: string
   
@@ -1524,6 +1557,18 @@ definitions:
         type: string
       interviewer:
         type: string
+  
+  Email:
+    type: object
+    properties:
+      SubscriberKey: 
+        type: string
+      Address: 
+        type: string
+      FirstName:
+        type: string
+      LastName:
+        type: string
       
   CandidateActivityList:
     type: array
@@ -1538,7 +1583,6 @@ definitions:
       interviewComment:
         type: string
       
-  
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
