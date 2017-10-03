@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.23"
+  version: "1.0.25"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -790,9 +790,13 @@ paths:
     get:
       tags:
       - "hiringmanager"
-      summary: "Retrieves the details for the candidate interview details"
+      summary: "Retrieves the details for the candidate interview details. In case there is no Application, then only Candidate related information"
       operationId: getInterviewSummary
       parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
       - name: applicationId
         in: query
         required: true
@@ -922,7 +926,18 @@ paths:
                 $ref: "#/definitions/CandidateSummaryBody"
               recentActivity:
                 $ref: "#/definitions/CandidateActivityList"
-    
+              gtkyStatus:
+                title: GTKYStatus
+                type: object
+                properties:
+                  gtkyPassed:
+                    type: boolean
+                  gtkyScore:
+                    $ref: "#/definitions/PicklistOption"
+                  gtkyBenchmark:
+                    $ref: "#/definitions/PicklistOption"
+                  gtkyDate:
+                    type: string
     
   /hm/postInterviewOutcome:
     post:
