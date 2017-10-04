@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.28"
+  version: "1.0.29"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -968,6 +968,37 @@ paths:
               recentActivity:
                 $ref: "#/definitions/CandidateActivityList"
 
+  /hm/postInterviewOutcome:
+    post:
+      tags:
+      - "hiringmanager"
+      summary: "Retrieves the details to a candidate"
+      operationId: postInterviewOutcome
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      - name: interviewBody
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            interviewId: 
+              type: string
+            interviewComment:
+              type: string
+            recommendForHire:
+              type: boolean
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema: 
+            $ref: "#/definitions/ResponseData"
+            
   /hm/getJobInfoToApplication:
     get:
       tags:
@@ -1156,6 +1187,37 @@ paths:
                     type: string
                   wooliesFitDate:
                     type: string
+
+  /hm/upsertCandidate:
+    post:
+      tags:
+      - "hiringmanager"
+      summary: "Create or updates candidate"
+      description: "Creates a candidate if no candidate id is provided. Update the candidate if candidate id is provided in query string."
+      operationId: "upsertCandidateHM"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "candidateData"
+        description: "Posted candidate object"
+        required: true 
+        schema:
+            $ref: "#/definitions/UpsertCandidate"
+      - name: "candidateId"
+        in: "query"
+        description: "Field name eg candidate Id"
+        required: true
+        type: string      
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"    
 
   
           
@@ -1551,6 +1613,9 @@ definitions:
       notInterestedReason:
         description: "Only needs to be specified in case the Candidate is rejecting"
         $ref: "#/definitions/PicklistOption"
+      sendEmail:
+        description: "Sends email if candidate needs email communication on opening"
+        $ref: "#/definitions/PicklistOption" 
       notInterestedComment:
         description: "Optional field for comments by the candidate"
         type: string
@@ -1568,6 +1633,9 @@ definitions:
       notInterestedReason:
         description: "Only needs to be specified in case the Candidate is rejecting. This only requires the picklistOptionId"
         $ref: "#/definitions/PicklistOption"
+      sendEmail:
+        description: "Sends email if candidate needs email communication on opening"
+        $ref: "#/definitions/PicklistOption" 
       notInterestedComment:
         description: "Optional field for comments by the candidate"
         type: string
