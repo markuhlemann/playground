@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.31"
+  version: "1.0.33"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -179,98 +179,6 @@ paths:
           description: "Candidate not found" 
 
   
-  /candidate/myToDoList/jobsApplied:
-    get:
-      tags:
-      - "candidate"
-      summary: "Get candidates To Do List"
-      description: "Get candidates To Do data from SF according to the Stage"
-      operationId: getJobApplied
-      produces:
-      - "application/json"
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            title: applications
-            type: array
-            items:
-              $ref: "#/definitions/ApplicationDetails"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"            
-
-  /candidate/myToDoList/jobsInvited:
-    get:
-      tags:
-      - "candidate"
-      summary: "Get candidates To Do List"
-      description: "Get candidates To Do data from SF according to the Stage"
-      operationId: getJobsInvited
-      produces:
-      - "application/json"
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            title: applications
-            type: array
-            items:
-              $ref: "#/definitions/ApplicationDetails"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"            
-
-  /candidate/myToDoList/profileTasks:
-    get:
-      tags:
-      - "candidate"
-      summary: "Get candidates To Do List"
-      description: "Get candidates To Do data from SF according to the Stage"
-      operationId: getToDoProfileTasks
-      produces:
-      - "application/json"
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            title: ProfileToDoList
-            type: object
-            properties:
-              retakeGTKYTest:
-                type: boolean
-              newGTKYTest:
-                type: boolean
-              missingWorkHistory:
-                type: boolean
-              missingWorkingPreferences:
-                type: boolean
-              date:
-                type: string
-              
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"            
-
-
   /candidate/uploadResume:
     post:
       tags:
@@ -647,6 +555,98 @@ paths:
           description: "successful operation"
           schema: 
             $ref: "#/definitions/InvitedRequisitionsOutput"
+            
+            
+  /candidate/myToDoList/jobsApplied:
+    get:
+      tags:
+      - "application"
+      summary: "Get candidates To Do List"
+      description: "Get candidates To Do data from SF according to the Stage"
+      operationId: getJobsApplied
+      produces:
+      - "application/json"
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            title: applications
+            type: array
+            items:
+              $ref: "#/definitions/ApplicationDetails"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"            
+
+  /candidate/myToDoList/jobsInvited:
+    get:
+      tags:
+      - "application"
+      summary: "Get candidates To Do List"
+      description: "Get candidates To Do data from SF according to the Stage"
+      operationId: getJobsInvited
+      produces:
+      - "application/json"
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            title: applications
+            type: array
+            items:
+              $ref: "#/definitions/ApplicationDetails"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"            
+
+  /candidate/myToDoList/profileTasks:
+    get:
+      tags:
+      - "application"
+      summary: "Get candidates To Do List"
+      description: "Get candidates To Do data from SF according to the Stage"
+      operationId: getToDoProfileTasks
+      produces:
+      - "application/json"
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            title: ProfileToDoList
+            type: object
+            properties:
+              retakeGTKYTest:
+                type: boolean
+              newGTKYTest:
+                type: boolean
+              missingWorkHistory:
+                type: boolean
+              missingWorkingPreferences:
+                type: boolean
+              date:
+                type: string
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"            
+            
 
 #######################################################################################################
 #######################################################################################################
@@ -1835,6 +1835,8 @@ definitions:
         type: string
       LastName:
         type: string
+      Body:
+        type: string  
       
   CandidateActivityList:
     type: array
@@ -1859,6 +1861,10 @@ definitions:
       interviewOutcome:
         type: string
       interviewerComments:
+        type: string
+      requisitionId:
+        type: string
+      requisitiontitle:
         type: string
       
       
