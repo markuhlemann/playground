@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.29"
+  version: "1.0.31"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -179,13 +179,13 @@ paths:
           description: "Candidate not found" 
 
   
-  /candidate/myToDoList:
+  /candidate/myToDoList/jobsApplied:
     get:
       tags:
       - "candidate"
       summary: "Get candidates To Do List"
       description: "Get candidates To Do data from SF according to the Stage"
-      operationId: myToDoList
+      operationId: getJobApplied
       produces:
       - "application/json"
       parameters:
@@ -197,11 +197,79 @@ paths:
         200:
           description: "successful operation"
           schema: 
-            $ref: "#/definitions/MyToDoList"
+            title: applications
+            type: array
+            items:
+              $ref: "#/definitions/ApplicationDetails"
         400:
           description: "Invalid email supplied"
         404:
           description: "Candidate not found"            
+
+  /candidate/myToDoList/jobsInvited:
+    get:
+      tags:
+      - "candidate"
+      summary: "Get candidates To Do List"
+      description: "Get candidates To Do data from SF according to the Stage"
+      operationId: getJobsInvited
+      produces:
+      - "application/json"
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            title: applications
+            type: array
+            items:
+              $ref: "#/definitions/ApplicationDetails"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"            
+
+  /candidate/myToDoList/profileTasks:
+    get:
+      tags:
+      - "candidate"
+      summary: "Get candidates To Do List"
+      description: "Get candidates To Do data from SF according to the Stage"
+      operationId: getToDoProfileTasks
+      produces:
+      - "application/json"
+      parameters:
+      - name: candidateId
+        in: query
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            title: ProfileToDoList
+            type: object
+            properties:
+              retakeGTKYTest:
+                type: boolean
+              newGTKYTest:
+                type: boolean
+              missingWorkHistory:
+                type: boolean
+              missingWorkingPreferences:
+                type: boolean
+              date:
+                type: string
+              
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"            
+
 
   /candidate/uploadResume:
     post:
@@ -559,6 +627,7 @@ paths:
           description: "successful operation"
           schema: 
             $ref: "#/definitions/CandidateStage"
+
 
   /candidate/getInvitedRequisitions:
     get:
@@ -968,37 +1037,6 @@ paths:
               recentActivity:
                 $ref: "#/definitions/CandidateActivityList"
 
-  /hm/postInterviewOutcome:
-    post:
-      tags:
-      - "hiringmanager"
-      summary: "Retrieves the details to a candidate"
-      operationId: postInterviewOutcome
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      - name: interviewBody
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            interviewId: 
-              type: string
-            interviewComment:
-              type: string
-            recommendForHire:
-              type: boolean
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: successful operation
-          schema: 
-            $ref: "#/definitions/ResponseData"
-            
   /hm/getJobInfoToApplication:
     get:
       tags:
@@ -1549,24 +1587,6 @@ definitions:
         items:
           $ref: "#/definitions/ApplicationDetails"
           
-  MyToDoList:
-    type: object
-    properties:
-      retakeGTKYTest:
-        type: boolean
-      newGTKYTest:
-        type: boolean
-      missingWorkHistory:
-        type: boolean
-      missingWorkingPreferences:
-        type: boolean
-      date:
-        type: string
-      applications:
-        type: array
-        items:
-          $ref: "#/definitions/ApplicationDetails"
-
   ApplicationDetails:
     type: object
     properties:
@@ -1715,6 +1735,8 @@ definitions:
       address:
         type: string
       phone:
+        type: string
+      gtkyStatus:
         type: string
         
   CandidateSearchResultList:
