@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.33"
+  version: "1.0.34"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -30,11 +30,6 @@ paths:
         required: true 
         schema:
             $ref: "#/definitions/UpsertCandidate"
-      - name: "candidateId"
-        in: "query"
-        description: "Field name eg candidate Id"
-        required: true
-        type: string      
       responses:
         200:
           description: "successful operation"
@@ -56,11 +51,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "candidateId"
-        in: "query"
-        description: "Field name candidate Id"
-        required: true
-        type: string      
       - name: "password"
         in: "body"
         description: "The password to reset"
@@ -93,11 +83,6 @@ paths:
         required: true
         schema:
             $ref: "#/definitions/UpsertCandidate"
-      - name: "candidateId"
-        in: "query"
-        description: "Field name eg candidate Id"
-        required: true
-        type: string      
       responses:
         200:
           description: "successful operation"
@@ -196,11 +181,6 @@ paths:
         description: "File Attachment"
         required: true
         type: file
-      - name: "candidateId"
-        in: "query"
-        description: "Field name eg candidate Id"
-        required: true
-        type: string      
       responses:
         200:
           description: "successful operation"
@@ -211,48 +191,6 @@ paths:
         404:
           description: "Candidate not found"   
   
-  /candidate/fileDownload:
-    get:
-      tags:
-      - "candidate"
-      summary: "Downloads a file from server"
-      description: "Downloads a file from server"
-      operationId: "fileDownload"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/octet-stream"
-      parameters:
-      - name: "candidateId"
-        in: "query"
-        description: "Field name eg candidate Id"
-        required: true
-        type: string
-      - name: "applicationId"
-        in: "query"
-        description: "The application Id for which to download the files"
-        required: true
-        type: string
-      - name: "module"
-        in: "query"
-        description: "Type of attachment to download"
-        required: true
-        type: string        
-      - name: "fileType"
-        in: "query"
-        description: "Type of attachment to download"
-        required: true
-        type: string        
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            type: file
-        400:
-          description: "Invalid candidate id or module name supplied"
-        404:
-          description: "Candidate or module not found"   
-
   /candidate/uploadSupportingDocument:
     post:
       tags:
@@ -265,11 +203,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - in: "query"
-        name: "candidateId"
-        description: "Candidate Id"
-        required: true
-        type: string
       - in: "query"
         name: "applicationId"
         description: "Application Id"
@@ -322,11 +255,6 @@ paths:
         description: "File Attachment"
         required: true
         type: file
-      - name: "candidateId"
-        in: "query"
-        description: "Field name eg candidate Id"
-        required: true
-        type: string      
       responses:
         200:
           description: "successful operation"
@@ -408,11 +336,6 @@ paths:
       operationId: "generateGTKYQuiz"
       produces:
       - "application/json"
-      parameters:
-      - name: "candidateId"
-        in: "query"
-        required: true
-        type: string
       responses:
         200:
           description: "successful operation"
@@ -428,10 +351,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "candidateId"
-        in: "query"
-        required: true
-        type: string
       - name: quizBody
         in: body
         required: true
@@ -464,11 +383,6 @@ paths:
       - "candidate"
       summary: "Retrieving information for the Candidate"
       operationId: getCandidateSummary
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       produces:
       - "application/json"
       responses:
@@ -483,11 +397,6 @@ paths:
       - "candidate"
       summary: "Retrieving only the Header information of a Candidate (Firstname, Lastname)"
       operationId: getCandidateHeader
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       produces:
       - "application/json"
       responses:
@@ -503,11 +412,6 @@ paths:
       - "application"
       summary: Retrieves the Agenda information for the Candidate
       operationId: getAgenda
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       produces:
       - "application/json"
       responses:
@@ -517,46 +421,6 @@ paths:
             $ref: "#/definitions/CandidateAgendaList"
 
 
-  /candidate/application/getStage:
-    get:
-      tags:
-      - "application"
-      summary: Retrieves the Stage of the Candidate
-      operationId: getStage
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/CandidateStage"
-
-
-  /candidate/getInvitedRequisitions:
-    get:
-      tags:
-      - "candidate"
-      summary: Retrieves the list of Requisitions to which the Candidate is invited to apply
-      operationId: getInvitedRequisitions
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/InvitedRequisitionsOutput"
-            
-            
   /candidate/myToDoList/jobsApplied:
     get:
       tags:
@@ -566,11 +430,6 @@ paths:
       operationId: getJobsApplied
       produces:
       - "application/json"
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       responses:
         200:
           description: "successful operation"
@@ -593,11 +452,6 @@ paths:
       operationId: getJobsInvited
       produces:
       - "application/json"
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       responses:
         200:
           description: "successful operation"
@@ -620,11 +474,6 @@ paths:
       operationId: getToDoProfileTasks
       produces:
       - "application/json"
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       responses:
         200:
           description: "successful operation"
@@ -661,10 +510,6 @@ paths:
       summary: Creates a new Application Object, as the candidate is interested in the role
       operationId: updateCandidateIsInterested
       parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       - name: requisitionId
         in: query
         required: true
@@ -688,10 +533,6 @@ paths:
       summary: Updates the JobApplication with the response from the Candidat whether he is interested or not
       operationId: updateCandidateIsNotInterested
       parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       - name: applicationData
         in: body
         required: true
@@ -717,10 +558,6 @@ paths:
       summary: Retrieves the details of the Hire for Attitude test
       operationId: getHFATestDetails
       parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       - name: applicationId
         in: query
         required: true
@@ -746,10 +583,6 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       - name: applicationId
         in: query
         required: true
@@ -777,10 +610,6 @@ paths:
       summary: The Candidate accepts the offer that is extended to him
       operationId: acceptOffer
       parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       - name: offerData
         in: body
         required: true
@@ -806,10 +635,6 @@ paths:
       summary: Declines the offer that has been extended to the candidate and updates SF with additional comments
       operationId: declineOffer
       parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
       - name: offerData
         in: body
         required: true
@@ -1089,7 +914,7 @@ paths:
       tags:
       - "hiringmanager"
       summary: Updates the Interview details and suitablity
-      operationId: upsertInterviewFeedBack
+      operationId: interviewFeedBack
       produces:
       - "application/json"
       parameters:
@@ -1326,39 +1151,6 @@ definitions:
       locale: 
         type: string      
 
-  GTKYQuizResponseInput:
-    type: object
-    properties:
-      candidateId:
-        type: string
-      gtkyQ01: 
-        type: string
-      gtkyQ02: 
-        type: string
-      gtkyQ03: 
-        type: string
-      gtkyQ04: 
-        type: string
-      gtkyQ05: 
-        type: string
-      
-  GTKYQuizResponseOutput:
-    type: object
-    properties: 
-      status: 
-        type: string
-      message: 
-        type: string
-      gtkyExpiry: 
-        type: string
-#        format: date
-      gtkyOverallBenchmark:
-        type: string
-      gtkyOverallScore: 
-        type: string
-      gtkyBenchmarkMet:
-        type: boolean
-
   CandidateSummaryBody:
     type: object
     properties:
@@ -1433,6 +1225,7 @@ definitions:
         $ref: "#/definitions/PicklistOption"
       sendEmail:
         $ref: "#/definitions/PicklistOption"
+      
 
   CandidateHeader:
     type: object
@@ -1467,14 +1260,6 @@ definitions:
         items:
           $ref: "#/definitions/PicklistOptionWithBGElement"  
         
-  
-
-  PreferredRoles:
-    type: array
-    title: results
-    items:
-      $ref: "#/definitions/PicklistOption"
-
   PreferredRolesWithBGElement:
     type: array
     title: results
@@ -1569,24 +1354,6 @@ definitions:
       locationAddress:
         type: string
 
-  CandidateStage:
-    type: object
-    properties:
-      retakeGTKYTest:
-        type: boolean
-      newGTKYTest:
-        type: boolean
-      missingWorkHistory:
-        type: boolean
-      missingWorkingPreferences:
-        type: boolean
-      date:
-        type: string
-      applications:
-        type: array
-        items:
-          $ref: "#/definitions/ApplicationDetails"
-          
   ApplicationDetails:
     type: object
     properties:
@@ -1636,6 +1403,9 @@ definitions:
       sendEmail:
         description: "Sends email if candidate needs email communication on opening"
         $ref: "#/definitions/PicklistOption" 
+      candidateInterest:
+        description: "Indicates if candidate is still interested in a role at Woolworth"
+        $ref: "#/definitions/PicklistOption" 
       notInterestedComment:
         description: "Optional field for comments by the candidate"
         type: string
@@ -1659,6 +1429,9 @@ definitions:
       notInterestedComment:
         description: "Optional field for comments by the candidate"
         type: string
+      candidateInterest:
+        description: "Indicates if candidate is still interested in a role at Woolworth"
+        $ref: "#/definitions/PicklistOption" 
       interestedInFurtherRoles:
         description: "Set if the Candidate is still interested in Roles"
         type: boolean
@@ -1686,25 +1459,6 @@ definitions:
         type: string
         format: password
         
-  InvitedRequisitionsOutput:
-    type: array
-    items:
-      $ref: "#/definitions/InvitedRequisition"
-
-  InvitedRequisition:
-    type: object
-    properties:
-      requisitionId:
-        type: string
-      requisitionTitle:
-        type: string
-      requisitionDescription:
-        type: string
-      hiringManager:
-        type: string
-      store:
-        type: string
-
   HFATestDetails:
     type: object
     properties:
@@ -1843,18 +1597,12 @@ definitions:
     items:
       $ref: "#/definitions/CandidateActivity"
   
-  PostInterviewInput:
-    type: object
-    properties:
-      interviewId: 
-        type: string
-      interviewComment:
-        type: string
-        
   InterviewDetails:
     type: object
     properties:
       interviewer:
+        type: string
+      interviewerName:
         type: string
       interviewDate:
         type: string
@@ -1866,7 +1614,7 @@ definitions:
         type: string
       requisitiontitle:
         type: string
-      
+  
       
 externalDocs:
   description: "Find out more about Swagger"
