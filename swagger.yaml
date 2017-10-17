@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.34"
+  version: "1.0.36"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -14,12 +14,38 @@ schemes:
 - "http"
 paths:
   
+  /candidate/createCandidate:
+    post:
+      tags:
+      - "candidate"
+      summary: "Creates a Candidate"
+      description: "Creates a candidate in SuccessFactors"
+      operationId: "createCandidate"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "candidateData"
+        description: "Posted candidate object"
+        required: true 
+        schema:
+            $ref: "#/definitions/UpsertCandidate"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"    
+  
   /candidate/upsertCandidate:
     post:
       tags:
       - "candidate"
-      summary: "Create or updates candidate"
-      description: "Creates a candidate if no candidate id is provided. Update the candidate if candidate id is provided in query string."
+      summary: "Updates a candidate"
+      description: "Updates the candidate in SuccessFactors."
       operationId: "upsertCandidate"
       produces:
       - "application/json"
@@ -116,54 +142,14 @@ paths:
       responses:
         200:
           description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found" 
-
-  /candidate/candidateExistsWithName:
-    get:
-      tags:
-      - "candidate"
-      summary: "Get candidate by candidate email"
-      description: check whether a candidate already exists
-      operationId: checkCandidateWithName
-      produces:
-      - "application/json"
-      parameters:
-      - name: "key"
-        in: "query"
-        description: "Field name eg primaryEmail"
-        required: true
-        type: string
-      - name: "value"
-        in: "query"
-        description: "Value of field  eg email address"
-        required: true
-        type: string  
-      responses:
-        200:
-          description: "successful operation"
           schema:
-            title: candidateData
-            type: object
-            properties:
-              candidateId:
-                type: string
-              firstName: 
-                type: string
-              lastName:
-                type: string
-              cellPhone:
-                type: string
+            title: candidateExists
+            type: boolean
         400:
           description: "Invalid email supplied"
         404:
           description: "Candidate not found" 
 
-  
   /candidate/uploadResume:
     post:
       tags:
@@ -495,7 +481,30 @@ paths:
           description: "Invalid email supplied"
         404:
           description: "Candidate not found"            
-            
+   
+  /candidate/removeAttachment:
+    post:
+      tags:
+      - "candidate"
+      summary: "Delete the attachment"
+      operationId: "removeAttachment"
+      parameters:
+      - name: AttachmentInput
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/AttachmentInputData"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Deletion of Attachment failed"
+          schema: 
+            $ref: "#/definitions/ResponseData"         
 
 #######################################################################################################
 #######################################################################################################
@@ -1289,7 +1298,13 @@ definitions:
         type: string
       name:
         type: string
-  
+ 
+  AttachmentInputData:
+    type: object
+    properties:
+      attachmentId:
+        type: string
+   
   OutsideWorkExperienceItem:
     type: object
     properties:
