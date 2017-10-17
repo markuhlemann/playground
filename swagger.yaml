@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.40"
+  version: "1.0.41"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -1136,13 +1136,13 @@ paths:
 #######################################################################################################
 #######################################################################################################
 
-  /rcm/candidate/startUpdate:
+  /rcm/candidate/startMassUpdate:
     post:
       tags:
       - "rcm"
       summary: "Asynchronous update"
       description: "Startign the update process"
-      operationId: "startUpdate"
+      operationId: "startMassUpdate"
       consumes:
       - "application/json"
       produces:
@@ -1170,7 +1170,7 @@ paths:
           description: "Invalid input"
 
 
-  /rcm/candidate/checkUpdateProgress:
+  /rcm/candidate/checkMassUpdateProgress:
     post:
       tags:
       - "rcm"
@@ -1194,7 +1194,7 @@ paths:
             title: UpdateReponse
             type: object
             properties:
-              threadGroupName: 
+              processName: 
                 type: string
               totalUpdates:
                 type: string
@@ -1206,14 +1206,14 @@ paths:
                 type: array
                 items:
                   type: string
-              errorList:
+              failedList:
                 type: array
                 items:
                   type: string
         405:
           description: "Invalid input"
 
-  /rcm/candidate/abortProcess:
+  /rcm/candidate/abortMassUpdate:
     post:
       tags:
       - "rcm"
