@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.36"
+  version: "1.0.38"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -142,7 +142,32 @@ paths:
       responses:
         200:
           description: "successful operation"
-          schema:
+          schema:  
+            $ref: "#/definitions/ResponseData"
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found" 
+
+  /candidate/exists:
+    get:
+      tags:
+      - "candidate"
+      summary: "Get candidate by candidate email"
+      description: check whether a candidate already exists
+      operationId: checkCandidateExists
+      produces:
+      - "application/json"
+      parameters:
+      - name: "primaryEmail"
+        in: "query"
+        description: "the primary email of the candidate"
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
             title: candidateExists
             type: boolean
         400:
@@ -150,6 +175,47 @@ paths:
         404:
           description: "Candidate not found" 
 
+  /candidate/candidateExistsWithName:
+    get:
+      tags:
+      - "candidate"
+      summary: "Get candidate by candidate email"
+      description: check whether a candidate already exists
+      operationId: checkCandidateWithName
+      produces:
+      - "application/json"
+      parameters:
+      - name: "key"
+        in: "query"
+        description: "Field name eg primaryEmail"
+        required: true
+        type: string
+      - name: "value"
+        in: "query"
+        description: "Value of field  eg email address"
+        required: true
+        type: string  
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            title: candidateData
+            type: object
+            properties:
+              candidateId:
+                type: string
+              firstName: 
+                type: string
+              lastName:
+                type: string
+              cellPhone:
+                type: string
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found" 
+
+  
   /candidate/uploadResume:
     post:
       tags:
@@ -1408,8 +1474,6 @@ definitions:
   CandidateNotInterestedInput:
     type: object
     properties:
-      candidateId:
-        type: string
       requisitionId: 
         type: string
       notInterestedReason:
@@ -1431,8 +1495,6 @@ definitions:
   OfferNotAcceptedInput:
     type: object
     properties:
-      candidateId:
-        type: string
       applicationId: 
         type: string
       notInterestedReason:
@@ -1454,8 +1516,6 @@ definitions:
   OfferAcceptedInput:
     type: object
     properties:
-      candidateId: 
-        type: string
       applicationId: 
         type: string
       dateOfBirth:
