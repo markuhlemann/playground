@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.38"
+  version: "1.0.40"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -10,6 +10,8 @@ tags:
   description: "Everything about Candidate Profile"
 - name: "application"
   description: "Services around the opportunities presented to the Candidate and Application"
+- name: "rcm"
+  description: "RCM Delete Options"
 schemes:
 - "http"
 paths:
@@ -119,36 +121,6 @@ paths:
         404:
           description: "Candidate not found"    
           
-  /candidate/candidateExists:
-    get:
-      tags:
-      - "candidate"
-      summary: "Get candidate by candidate email"
-      description: check whether a candidate already exists
-      operationId: checkCandidate
-      produces:
-      - "application/json"
-      parameters:
-      - name: "key"
-        in: "query"
-        description: "Field name eg primaryEmail"
-        required: true
-        type: string
-      - name: "value"
-        in: "query"
-        description: "Value of field  eg email address"
-        required: true
-        type: string  
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found" 
-
   /candidate/exists:
     get:
       tags:
@@ -1157,6 +1129,112 @@ paths:
         404:
           description: "Candidate not found"    
 
+
+#######################################################################################################
+#######################################################################################################
+############################################ Remove Candidate #########################################
+#######################################################################################################
+#######################################################################################################
+
+  /rcm/candidate/startUpdate:
+    post:
+      tags:
+      - "rcm"
+      summary: "Asynchronous update"
+      description: "Startign the update process"
+      operationId: "startUpdate"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "List of Candidates to update"
+        required: true
+        schema:
+          title: candidates
+          type: array
+          items:
+            $ref: "#/definitions/CandidateCountryUpdate"
+      responses:
+        200:
+          description: "Successful Operation"
+          schema:
+            title: UpdateReponse
+            type: object
+            properties:
+              process: 
+                type: string
+        405:
+          description: "Invalid input"
+
+
+  /rcm/candidate/checkUpdateProgress:
+    post:
+      tags:
+      - "rcm"
+      summary: "Asynchronous update"
+      description: ""
+      operationId: "checkProgress"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "process"
+        description: "the name of the process running the update"
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Invalid input"
+          schema:
+            title: UpdateReponse
+            type: object
+            properties:
+              threadGroupName: 
+                type: string
+              totalUpdates:
+                type: string
+              successfulUpdates:
+                type: string
+              failedUpdates:
+                type: string
+              successList:
+                type: array
+                items:
+                  type: string
+              errorList:
+                type: array
+                items:
+                  type: string
+        405:
+          description: "Invalid input"
+
+  /rcm/candidate/abortProcess:
+    post:
+      tags:
+      - "rcm"
+      summary: "Asynchronous update"
+      description: "Aborts the update process"
+      operationId: "abortProcess"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "process"
+        description: "the name of the process running the update"
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Invalid input"
+        405:
+          description: "Invalid input"
   
           
 #######################################################################################################
@@ -1166,6 +1244,15 @@ paths:
 #######################################################################################################
 
 definitions:
+
+  CandidateCountryUpdate:
+    type: object
+    properties:
+      candidateId:
+        type: string
+      country:
+        type: string
+
   ResponseData:
     type: "object"
     properties:
