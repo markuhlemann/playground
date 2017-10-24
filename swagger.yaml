@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.42"
+  version: "1.0.43"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -10,8 +10,6 @@ tags:
   description: "Everything about Candidate Profile"
 - name: "application"
   description: "Services around the opportunities presented to the Candidate and Application"
-- name: "rcm"
-  description: "RCM Delete Options"
 schemes:
 - "http"
 paths:
@@ -147,47 +145,7 @@ paths:
         404:
           description: "Candidate not found" 
 
-  /candidate/candidateExistsWithName:
-    get:
-      tags:
-      - "candidate"
-      summary: "Get candidate by candidate email"
-      description: check whether a candidate already exists
-      operationId: checkCandidateWithName
-      produces:
-      - "application/json"
-      parameters:
-      - name: "key"
-        in: "query"
-        description: "Field name eg primaryEmail"
-        required: true
-        type: string
-      - name: "value"
-        in: "query"
-        description: "Value of field  eg email address"
-        required: true
-        type: string  
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            title: candidateData
-            type: object
-            properties:
-              candidateId:
-                type: string
-              firstName: 
-                type: string
-              lastName:
-                type: string
-              cellPhone:
-                type: string
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found" 
 
-  
   /candidate/uploadResume:
     post:
       tags:
@@ -209,11 +167,11 @@ paths:
         200:
           description: "successful operation"
           schema:  
-            $ref: "#/definitions/ResponseData"
+            $ref: "#/definitions/UploadResume"
         400:
           description: "Invalid candidate id supplied"
         404:
-          description: "Candidate not found"   
+          description: "Upload went wrong"   
   
   /candidate/uploadSupportingDocument:
     post:
@@ -864,6 +822,10 @@ paths:
         in: query
         required: true
         type: string
+      - name: timeZone
+        in: query
+        required: true
+        type: string
       produces:
         - application/json
       responses:
@@ -935,26 +897,6 @@ paths:
                 type: string
               store:
                 type: string
-      
-
-  /hm/fileDownloadList:
-    get:
-      tags:
-      - "hiringmanager"
-      summary: List of items that can be downloaded
-      operationId: getFileDownloadList
-      parameters:
-      - name: candidateId
-        in: query
-        required: true
-        type: string
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/FilesToDownloadList"
             
   /hm/upsertInterviewFeedBack:
     post:
@@ -1129,114 +1071,6 @@ paths:
         404:
           description: "Candidate not found"    
 
-
-#######################################################################################################
-#######################################################################################################
-############################################ Remove Candidate #########################################
-#######################################################################################################
-#######################################################################################################
-
-  /rcm/candidate/startMassUpdate:
-    post:
-      tags:
-      - "rcm"
-      summary: "Asynchronous update"
-      description: "Startign the update process"
-      operationId: "startMassUpdate"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of Candidates to update"
-        required: true
-        schema:
-          title: candidates
-          type: array
-          items:
-            $ref: "#/definitions/CandidateCountryUpdate"
-      responses:
-        200:
-          description: "Successful Operation"
-          schema:
-            title: UpdateReponse
-            type: object
-            properties:
-              process: 
-                type: string
-        405:
-          description: "Invalid input"
-
-
-  /rcm/candidate/checkMassUpdateProgress:
-    post:
-      tags:
-      - "rcm"
-      summary: "Asynchronous update"
-      description: ""
-      operationId: "checkMassUpdateProgress"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "query"
-        name: "process"
-        description: "the name of the process running the update"
-        required: true
-        type: string
-      responses:
-        200:
-          description: "Invalid input"
-          schema:
-            title: MassUpdateReponse
-            type: object
-            properties:
-              processName: 
-                type: string
-              totalUpdates:
-                type: integer
-              totalProcessUpdates:
-                type: integer
-              successfulUpdates:
-                type: integer
-              failedUpdates:
-                type: integer
-              successList:
-                type: array
-                items:
-                  $ref: "#/definitions/CandidateCountryUpdateResult"
-              failedList:
-                type: array
-                items:
-                  $ref: "#/definitions/CandidateCountryUpdateResult"
-        405:
-          description: "Invalid input"
-
-  /rcm/candidate/abortMassUpdate:
-    post:
-      tags:
-      - "rcm"
-      summary: "Asynchronous update"
-      description: "Aborts the update process"
-      operationId: "abortMassUpdate"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "query"
-        name: "process"
-        description: "the name of the process running the update"
-        required: true
-        type: string
-      responses:
-        200:
-          description: "Invalid input"
-        405:
-          description: "Invalid input"
   
           
 #######################################################################################################
@@ -1246,30 +1080,6 @@ paths:
 #######################################################################################################
 
 definitions:
-
-  CandidateCountryUpdate:
-    type: object
-    properties:
-      candidateId:
-        type: string
-      country:
-        type: string
-
-  CandidateCountryUpdateResult:
-    type: object
-    properties:
-      candidateId:
-        type: string
-      httpCode:
-        type: string
-      message:
-        type: string
-      status:
-        type: string
-      editStatus:
-        type: string
-      
-
   ResponseData:
     type: "object"
     properties:
@@ -1282,7 +1092,19 @@ definitions:
       message:
         type: "string"  
     xml:
-      name: "User"        
+      name: "User"    
+      
+  UploadResume:
+    type: "object"
+    properties:
+      attachmentId:
+        type: "string"
+      editStatus:
+        type: "string"
+      status:
+        type: "string"
+      message:
+        type: "string"    
       
   UpsertCandidate:
     type: "string"
@@ -1558,22 +1380,6 @@ definitions:
         type: string
       status:
         type: string
-  
-  FilesToDownloadList:
-    type: array
-    items:
-      $ref: "#/definitions/FileToDownloadItems"
-
-  FileToDownloadItems:
-    type: object
-    properties:
-      attachmentId:
-        type: string
-      attachmentName: 
-        type: string
-      module:
-        description: "Either jobsApplied or supportingDoc1"
-        type: string
       
   CandidateNotInterestedInput:
     type: object
@@ -1792,6 +1598,18 @@ definitions:
       requisitionId:
         type: string
       requisitiontitle:
+        type: string
+  
+  CandidateData:
+    type: object
+    properties:
+      candidateId:
+        type: string
+      firstName: 
+        type: string
+      lastName:
+        type: string
+      cellPhone:
         type: string
   
       
