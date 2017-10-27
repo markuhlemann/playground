@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.43"
+  version: "1.0.44"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -10,6 +10,8 @@ tags:
   description: "Everything about Candidate Profile"
 - name: "application"
   description: "Services around the opportunities presented to the Candidate and Application"
+- name: "monitoring"
+  description: "Services to monitor the system performance"
 schemes:
 - "http"
 paths:
@@ -1072,6 +1074,49 @@ paths:
           description: "Candidate not found"    
 
   
+
+#######################################################################################################
+#######################################################################################################
+############################################ Monitoring ##############################################
+#######################################################################################################
+#######################################################################################################
+  
+  /monitoring/executionStatistics:
+    get:
+      tags:
+      - "monitoring"
+      summary: "Retrieves execution statistics"
+      description: ""
+      operationId: "getExecutionStatistics"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "fromDate"
+        description: "indicates the date from which the statistics should be pulled"
+        required: false 
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            title: Statistics
+            type: object
+            properties:
+              servicePerformance:
+                type: array
+                items:
+                  $ref: "#/definitions/PerformanceStatistic"
+              serviceAvailability:
+                type: array
+                items:
+                  $ref: "#/definitions/AvailabilityStatistic"
+                
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Candidate not found"    
+      
           
 #######################################################################################################
 #######################################################################################################
@@ -1080,6 +1125,39 @@ paths:
 #######################################################################################################
 
 definitions:
+  PerformanceStatistic:
+    type: object
+    properties:
+      serviceName:
+        type: string
+      averageResponseTime:
+        type: number
+        format: float
+      timeframeText:
+        type: string
+      timeframeFrom:
+        type: string
+        format: date
+      timeframeTo:
+        type: string
+        format: date
+      totalCalls:
+        type: integer
+      failedCalls:
+        type: integer
+        
+  AvailabilityStatistic:
+    type: object
+    properties:
+      systemName:
+        type: string
+      executionStatus:
+        type: string
+      timestamp:
+        type: string
+        format: date
+
+
   ResponseData:
     type: "object"
     properties:
