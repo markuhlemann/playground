@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.44"
+  version: "1.0.45"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -10,8 +10,6 @@ tags:
   description: "Everything about Candidate Profile"
 - name: "application"
   description: "Services around the opportunities presented to the Candidate and Application"
-- name: "monitoring"
-  description: "Services to monitor the system performance"
 schemes:
 - "http"
 paths:
@@ -1081,13 +1079,13 @@ paths:
 #######################################################################################################
 #######################################################################################################
   
-  /monitoring/executionStatistics:
+  /monitoring/servicePerformance:
     get:
       tags:
       - "monitoring"
-      summary: "Retrieves execution statistics"
+      summary: "Retrieves statistics on the service performance"
       description: ""
-      operationId: "getExecutionStatistics"
+      operationId: "getServicePerformance"
       produces:
       - "application/json"
       parameters:
@@ -1100,23 +1098,42 @@ paths:
         200:
           description: "successful operation"
           schema:
-            title: Statistics
+            title: performanceStatistics
             type: object
             properties:
               servicePerformance:
                 type: array
                 items:
                   $ref: "#/definitions/PerformanceStatistic"
+
+
+  /monitoring/serviceAvailability:
+    get:
+      tags:
+      - "monitoring"
+      summary: "Retrieves statistics around the availability of the services"
+      description: ""
+      operationId: "getServiceAvailability"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "fromDate"
+        description: "indicates the date from which the statistics should be pulled"
+        required: false 
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            title: availabilityStatistics
+            type: object
+            properties:
               serviceAvailability:
                 type: array
                 items:
                   $ref: "#/definitions/AvailabilityStatistic"
-                
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"    
-      
+
           
 #######################################################################################################
 #######################################################################################################
