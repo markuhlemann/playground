@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.45"
+  version: "1.0.50"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -10,6 +10,8 @@ tags:
   description: "Everything about Candidate Profile"
 - name: "application"
   description: "Services around the opportunities presented to the Candidate and Application"
+- name: "monitoring"
+  description: "Allows to monitor the performance and availability of the system"
 schemes:
 - "http"
 paths:
@@ -663,6 +665,22 @@ paths:
 #######################################################################################################
 #######################################################################################################
 
+  /hm/checkAccess:
+    get:
+      tags:
+        - hiringmanager
+      summary: >-
+        Checks whether the user has the right permissions to use the HiringManager application
+      operationId: checkAccess
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:  
+            title: hasAccess
+            type: boolean
+
   /hm/searchCandidate:
     post:
       tags:
@@ -1090,8 +1108,8 @@ paths:
       - "application/json"
       parameters:
       - in: "query"
-        name: "fromDate"
-        description: "indicates the date from which the statistics should be pulled"
+        name: "numberPeriods"
+        description: "indicates the number of periods that should be retrieved. Default is 24, the remaining periods will be printed to the log and removed from the statistic memory"
         required: false 
         type: string
       responses:
@@ -1104,7 +1122,7 @@ paths:
               servicePerformance:
                 type: array
                 items:
-                  $ref: "#/definitions/PerformanceStatistic"
+                  $ref: "#/definitions/PerformanceStatisticResult"
 
 
   /monitoring/serviceAvailability:
@@ -1134,6 +1152,21 @@ paths:
                 items:
                   $ref: "#/definitions/AvailabilityStatistic"
 
+  /monitoring/sendTestEmail:
+    get:
+      tags:
+      - "monitoring"
+      summary: "Sends a test email to the defined address on the destination smfc_api_messaging_noauth"
+      description: ""
+      operationId: "sendTestErrorEmail"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ResponseData"
+      
           
 #######################################################################################################
 #######################################################################################################
@@ -1147,6 +1180,9 @@ definitions:
     properties:
       serviceName:
         type: string
+      totalResponseTime:
+        type: number
+        format: float
       averageResponseTime:
         type: number
         format: float
@@ -1154,15 +1190,28 @@ definitions:
         type: string
       timeframeFrom:
         type: string
-        format: date
+        format: date-time
       timeframeTo:
         type: string
-        format: date
+        format: date-time
       totalCalls:
+        type: integer
+      successfulCalls:
         type: integer
       failedCalls:
         type: integer
-        
+
+  PerformanceStatisticResult:
+    type: object
+    properties:
+      service: 
+        type: string
+      statistics: 
+        type: array
+        items:
+          $ref: "#/definitions/PerformanceStatistic"
+          
+          
   AvailabilityStatistic:
     type: object
     properties:
@@ -1172,7 +1221,7 @@ definitions:
         type: string
       timestamp:
         type: string
-        format: date
+        format: date-time
 
 
   ResponseData:
