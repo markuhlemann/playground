@@ -1,0 +1,435 @@
+swagger: "2.0"
+info:
+  description: "This is the API definition for the Employee performance evaluation process."
+  version: "1.0.0"
+  title: "Performance Evaluation by Woolies"
+host: "my.wowcareers.com.au"
+basePath: "/"
+tags:
+- name: "myplan"
+  description: "Everything related to my plan"
+schemes:
+- "http"
+paths:
+
+  /employee/exists:
+    get:
+      tags:
+      - "employee"
+      summary: "Get employee by employee email"
+      description: check whether a employee already exists
+      operationId: checkEmployeeExists
+      produces:
+      - "application/json"
+      parameters:
+      - name: "primaryEmail"
+        in: "query"
+        description: "the primary email of the employee"
+        required: true
+        type: string
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            title: employeeExists
+            type: boolean
+        400:
+          description: "Invalid email supplied"
+        404:
+          description: "Employee not found" 
+
+  /employee/Picklist2:
+    get:
+      tags:
+      - "employee"
+      operationId: getPicklist
+      produces: 
+      - "application/json"
+      parameters: 
+      - name: "picklistId"
+        in: "query"
+        description: "The Id of the picklist to read"
+        required: true
+        type: "string"
+      - name: "parent"
+        in: "query"
+        description: "In case it is a nested picklist, the partent Id"
+        required: false
+        type: "string"            
+      responses:
+        default:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/Picklist"
+
+  /employee/version:
+    get:
+      tags:
+      - "employee"
+      summary: "Returns the version of the API layer"
+      operationId: getVersion
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: string
+
+
+  /employee/getGoalTemplateId:
+    get:
+      tags:
+      - "employee"
+      summary: "Return the current Goal Plan Template ID of the logged in Employee"
+      operationId: getGoalPlanTemplateId
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/GoalPlanTemplateIdResponse"
+
+  /employee/getGoalTemplatePicklists:
+    get:
+      tags:
+      - "employee"
+      summary: "Returns the defined Picklists for the Goal Templates"
+      operationId: getGoalTemplatePicklists
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/GoalPlanPicklistsResponse"
+            
+  /employee/getUserDetails:
+    get:
+      tags:
+      - "employee"
+      summary: "Returns the User details for the logged in User"
+      operationId: getUserDetails
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/UserData"
+
+  /employee/getGoalsForUser:
+    get:
+      tags:
+      - "employee"
+      summary: "Returns all goals for a specific user in a selected year"
+      operationId: getGoalsForUser
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the username to retrieve values for"
+        required: false
+        type: string
+      - name: "goalTemplateId"
+        in: "query"
+        description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template "
+        required: false
+        type: string
+      - name: "categoryId"
+        in: "query"
+        description: "The category that the result should be limited to"
+        required: false
+        type: string      
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/GoalsForUser"
+
+  /employee/upsertGoals:
+    post:
+      tags:
+      - "employee"
+      summary: "Upsert of Goals against SuccessFactors"
+      operationId: upsertGoals
+      parameters:
+      - name: "goals"
+        in: "body"
+        description: "the goals to import"
+        required: true
+        schema: 
+          $ref: "#/definitions/GoalsForUser"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/ResponseData"
+
+  
+          
+#######################################################################################################
+#######################################################################################################
+############################################ Definitions ##############################################
+#######################################################################################################
+#######################################################################################################
+
+definitions:
+  PerformanceStatistic:
+    type: object
+    properties:
+      serviceName:
+        type: string
+      totalResponseTime:
+        type: number
+        format: float
+      averageResponseTime:
+        type: number
+        format: float
+      timeframeText:
+        type: string
+      timeframeFrom:
+        type: string
+        format: date-time
+      timeframeTo:
+        type: string
+        format: date-time
+      totalCalls:
+        type: integer
+      successfulCalls:
+        type: integer
+      failedCalls:
+        type: integer
+
+  ResponseData:
+    type: "object"
+    properties:
+      employeeId:
+        type: "string"
+      editStatus:
+        type: "string"
+      status:
+        type: "string"
+      message:
+        type: "string"  
+    xml:
+      name: "User"    
+      
+ 
+      
+  Picklist:
+    type: "object"
+    properties:
+      PickListValues:
+        type: array
+        items:
+          $ref: '#/definitions/PicklistOption'
+  
+  PicklistOption:
+    type: object
+    properties:
+      label:
+        type: string
+      picklistId:
+        type: string
+      picklistOptionId:
+        type: string
+      externalCode:
+        type: string
+      locale: 
+        type: string
+        
+  PicklistOptionWithBGElement:
+    type: object
+    properties:
+      backgroundElementId:
+        type: string
+      label:
+        type: string
+      picklistId:
+        type: string
+      picklistOptionId:
+        type: string
+      externalCode:
+        type: string
+      locale: 
+        type: string      
+
+  Email:
+    type: object
+    properties:
+      SubscriberKey: 
+        type: string
+      Address: 
+        type: string
+      FirstName:
+        type: string
+      LastName:
+        type: string
+      Body:
+        type: string  
+
+  GoalPlanPicklists:
+    type: array
+    items: 
+      $ref: "#/definitions/GoalPlanPicklist"
+      
+  GoalPlanTemplateIdResponse:
+    type: object
+    properties:
+      goalPlanTemplateId: 
+        type: string
+  
+  GoalPlanPicklist:
+    type: object
+    properties:
+      picklistId: 
+        type: string
+        description: "field Id of the enum structure"
+      key:
+        type: string
+        description: "value of the enum structure"
+      label:
+        type: string
+      goalPlanId:
+        type: string
+        
+  UserData:
+    type: object
+    properties:
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      jobCode:
+        type: string
+      department:
+        type: string
+        
+
+  MeasureOfSuccess:
+    type: object
+    properties:
+      description:
+        type: string
+      done:
+        description: "Percent complete of the Goal"
+        type: string
+
+  
+  AvailableTag:
+    type: object
+    properties:
+      fieldId: 
+        type: string
+      label:
+        type: string
+      planId: 
+        type: string
+      value:
+        type: string
+      isSelected:
+        type: boolean
+  
+  Feedback:
+    type: object
+    properties:
+      id:
+        type: string
+        format: date
+      commentator:
+        type: string
+      content:
+        type: string
+      lastModified:
+        type: string
+        format: date
+
+  Goal:
+    type: object
+    properties:
+      id:
+        type: string
+      name: 
+        type: string
+        description: "Stores the title of the goal"
+      type:
+        type: string
+      state: 
+        type: string
+        description: "Stores the state of the goal"
+      stateLabel: 
+        type: string
+        description: "The label of the current state"
+      primaryTag:
+        type: string
+        description: "Updates customTag1"
+      secondaryTag:
+        type: string
+        description: "Updates customTag2"
+      visibility:
+        type: string
+        description: "Updates permissions/privateAccess"
+      currentOwner: 
+        type: string
+      createdBy:
+        type: string
+        description: "Updates customcreatedby"
+      category:
+        type: string
+      measuresOfSuccess:
+        type: array
+        items:
+          $ref: "#/definitions/MeasureOfSuccess"
+      feedback:
+        type: array
+        items:
+          $ref: "#/definitions/Feedback"
+      availableTags:
+        type: array
+        items:
+          $ref: "#/definitions/AvailableTag"
+
+  GoalsForCategory:
+    type: object
+    properties:
+      categoryId:
+        type: string
+      categoryLabel:
+        type: string
+      goals:
+        type: array
+        items:
+          $ref: "#/definitions/Goal"
+          
+  GoalPlanTemplateIdResponse:
+    type: object
+    properties:
+      goalPlanTemplateId: 
+        type: string
+  
+  GoalPlanPicklistsResponse:
+    type: object
+    properties:
+      picklists:
+        type: object
+        $ref: "#/definitions/GoalPlanPicklists"
+
+  GoalsForUser:
+    type: object
+    properties:
+      categories:
+        type: array
+        items:
+          $ref: "#/definitions/GoalsForCategory"
+
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
