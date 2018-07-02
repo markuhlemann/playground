@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.0"
+  version: "1.0.4"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -12,31 +12,6 @@ schemes:
 - "http"
 paths:
 
-  /employee/exists:
-    get:
-      tags:
-      - "employee"
-      summary: "Get employee by employee email"
-      description: check whether a employee already exists
-      operationId: checkEmployeeExists
-      produces:
-      - "application/json"
-      parameters:
-      - name: "primaryEmail"
-        in: "query"
-        description: "the primary email of the employee"
-        required: true
-        type: string
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            title: employeeExists
-            type: boolean
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Employee not found" 
 
   /employee/Picklist2:
     get:
@@ -81,7 +56,7 @@ paths:
     get:
       tags:
       - "employee"
-      summary: "Return the current Goal Plan Template ID of the logged in Employee"
+      summary: "OBSOLETE - Return the current Goal Plan Template ID of the logged in Employee"
       operationId: getGoalPlanTemplateId
       produces:
       - "application/json"
@@ -91,11 +66,34 @@ paths:
           schema:  
             $ref: "#/definitions/GoalPlanTemplateIdResponse"
 
+  /employee/getGoalTemplate:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the details of the Goal Plan Template Id. Chooses the current one by default, but can be switched to a different Goal Plan Template Id"
+      operationId: getGoalPlanTemplate
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: goalPlanTemplateResponse
+            properties:
+              goalPlanTemplateId:
+                type: string
+              goalPlanTemplateLabel:
+                type: string
+              picklists:
+                $ref: "#/definitions/GoalPlanPicklists"
+
+
   /employee/getGoalTemplatePicklists:
     get:
       tags:
       - "employee"
-      summary: "Returns the defined Picklists for the Goal Templates"
+      summary: "OBSOLETE - Returns the defined Picklists for the Goal Templates"
       operationId: getGoalTemplatePicklists
       produces:
       - "application/json"
@@ -111,6 +109,12 @@ paths:
       - "employee"
       summary: "Returns the User details for the logged in User"
       operationId: getUserDetails
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the username to retrieve values for"
+        required: false
+        type: string
       produces:
       - "application/json"
       responses:
@@ -153,7 +157,7 @@ paths:
     post:
       tags:
       - "employee"
-      summary: "Upsert of Goals against SuccessFactors"
+      summary: "Upsert one or many goals against SuccessFactors"
       operationId: upsertGoals
       parameters:
       - name: "goals"
@@ -167,9 +171,123 @@ paths:
       responses:
         200:
           description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
 
+  /employee/getAvailablePerformanceYears:
+    get:
+      tags:
+      - "employee"
+      summary: "Returns the available Performance Years for the application"
+      operationId: getAvailablePerformanceYears
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: availablePerformanceYears
+            properties:
+              availablePerformanceYears:
+                type: array
+                items:
+                  $ref: "#/definitions/KeyValuePair"
+  
+  /employee/showSplashPage:
+    get:
+      tags:
+      - "employee"
+      summary: "o  Checks whether to show a splash page for the user in the particular context. The context itself is a key that can be used by the administrator to use different splash pages at different stages in the application"
+      operationId: showSplashPage
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the username to retrieve values for"
+        required: false
+        type: string
+      - name: "goalTemplateId"
+        in: "query"
+        description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template"
+        required: false
+        type: string
+      - name: "context"
+        in: "query"
+        description: "The context in which the application is checking whether to display the splash page"
+        required: true
+        type: string      
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: splashPageResponse
+            properties:
+              showSplashPage:
+                type: string
+                format: boolean
+              splashPageUrl:
+                type: string
+    
+  /employee/getUserContext:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the user specific settings that the application users in order to determine behavior. This is used e.g. to remember that a user acknowledged the splash page and other user dialogs"
+      operationId: getUserContext
+      parameters:
+      - name: "goalTemplateId"
+        in: "query"
+        description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: userContextResponse
+            properties:
+              userContextSettings:
+                type: array
+                items:
+                  $ref: "#/definitions/UserContextSetting"
+    
+  /employee/getExampleGoalForCategory:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Example Goal for a specific business unit and for a category"
+      operationId: getExampleGoalForCategory
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "The name of the user for which the Example Goals should be retrieved. Defauled to the logged in user"
+        required: false
+        type: string
+      - name: "category"
+        in: "query"
+        description: "the category to which to select the Example Goal for"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: exampleGoal
+            properties:
+              exampleGoal:
+                $ref: "#/definitions/Goal"
+  
   
           
 #######################################################################################################
@@ -218,9 +336,7 @@ definitions:
         type: "string"  
     xml:
       name: "User"    
-      
- 
-      
+
   Picklist:
     type: "object"
     properties:
@@ -380,6 +496,15 @@ definitions:
         description: "Updates customcreatedby"
       category:
         type: string
+      startDate:
+        type: string
+        format: date
+      dueDate:
+        type: string
+        format: date
+      hasChanged:
+        type: string
+        format: boolean
       measuresOfSuccess:
         type: array
         items:
@@ -425,8 +550,26 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/GoalsForCategory"
+          
+  KeyValuePair:
+    type: object
+    properties:
+      key:
+        type: string
+      value: 
+        type: string
+        
+  UserContextSetting:
+    type: object
+    properties:
+      context:
+        type: string
+      goalPlanTemplateId:
+        type: string
+      value: 
+        type: string
 
-
+  
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
