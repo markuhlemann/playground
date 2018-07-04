@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.4"
+  version: "1.0.5"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -326,7 +326,7 @@ definitions:
   ResponseData:
     type: "object"
     properties:
-      employeeId:
+      key:
         type: "string"
       editStatus:
         type: "string"
@@ -415,11 +415,23 @@ definitions:
         type: string
       firstName:
         type: string
+      employeeId:
+        type: string
       lastName:
         type: string
       jobCode:
         type: string
+      jobId:
+        type: string
       department:
+        type: string
+      departmentId:
+        type: string
+      photo:
+        type: string
+      division:
+        type: string
+      businessUnitId:
         type: string
       businessUnit:
         description: "custom08-businessUnit of the user"
