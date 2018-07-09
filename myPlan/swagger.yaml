@@ -151,12 +151,12 @@ paths:
           schema: 
             $ref: "#/definitions/GoalPlanPicklistsResponse"
             
-  /goals/getGoalsForUser:
+  /goals/getGoalsForUserByCategory:
     get:
       tags:
       - "goals"
       summary: "Returns all goals stored against a goal plan for a specific user in a selected year"
-      operationId: getGoalsForUser
+      operationId: getGoalsForUserByCategory
       parameters:
       - name: "userName"
         in: "query"
@@ -181,13 +181,48 @@ paths:
           schema:  
             $ref: "#/definitions/GoalsForUser"
 
+  /goals/getGoalsForUserFlat:
+    get:
+      tags:
+      - "goals"
+      summary: "Returns all goals stored against a goal plan for a specific user in a selected year. The result list is flat and does not have structure regarding the category"
+      operationId: getGoalsForUserFlag
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the username to retrieve values for"
+        required: false
+        type: string
+      - name: "goalTemplateId"
+        in: "query"
+        description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template "
+        required: false
+        type: string
+      - name: "categoryId"
+        in: "query"
+        description: "The category that the result should be limited to"
+        required: false
+        type: string      
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            properties:
+              goals:
+                type: array
+                items:
+                  $ref: "#/definitions/Goal"
 
-  /goals/upsertGoals:
+
+  /goals/upsertGoalsByCategory:
     post:
       tags:
       - "goals"
       summary: "Upsert one or many goals against SuccessFactors"
-      operationId: upsertGoals
+      operationId: upsertGoalsByCategory
       parameters:
       - name: "goals"
         in: "body"
@@ -195,6 +230,34 @@ paths:
         required: true
         schema: 
           $ref: "#/definitions/GoalsForUser"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
+
+  /goals/upsertGoalsFlat:
+    post:
+      tags:
+      - "goals"
+      summary: "Upsert one or many goals against SuccessFactors"
+      operationId: upsertGoalsFlat
+      parameters:
+      - name: "goals"
+        in: "body"
+        description: "the goals to import"
+        required: true
+        schema: 
+          type: object
+          properties:
+            goals:
+              type: array
+              items:
+                $ref: "#/definitions/Goal"
       produces:
       - "application/json"
       responses:
@@ -330,6 +393,11 @@ paths:
       summary: "Retrieves the Team Members for a Team Leader, including the stage of the Goal Setting Process"
       operationId: getTeamMemberDetails
       parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: true
+        type: string
       - name: "readGoalStage"
         in: "query"
         description: "If the parameter is present and true, the Goal Stage should be read"
