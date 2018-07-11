@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.9"
+  version: "1.0.10"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -186,7 +186,7 @@ paths:
       tags:
       - "goals"
       summary: "Returns all goals stored against a goal plan for a specific user in a selected year. The result list is flat and does not have structure regarding the category"
-      operationId: getGoalsForUserFlag
+      operationId: getGoalsForUserFlat
       parameters:
       - name: "userName"
         in: "query"
@@ -270,7 +270,7 @@ paths:
         description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template"
         required: false
         type: string
-      - name: "context"
+      - name: "key"
         in: "query"
         description: "The context in which the application is checking whether to display the splash page"
         required: true
@@ -558,6 +558,8 @@ definitions:
       departmentId:
         type: string
       photo:
+        type: string
+      mimeType:
         type: string
       division:
         type: string
