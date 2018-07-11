@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.10"
+  version: "1.0.11"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -136,6 +136,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/definitions/GoalPlanTemplate"
+              responseData:
+                $ref: "#/definitions/ResponseData"
 
   /goals/getGoalTemplatePicklists:
     get:
@@ -286,6 +288,8 @@ paths:
             properties:
               showSplashPage:
                 type: boolean
+              responseData:
+                $ref: "#/definitions/ResponseData"
     
   /goals/getUserContext:
     get:
@@ -312,6 +316,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/definitions/UserContextSetting"
+              responseData:
+                $ref: "#/definitions/ResponseData"
     
   /goals/getExampleGoalForCategory:
     get:
@@ -351,6 +357,9 @@ paths:
             properties:
               exampleGoal:
                 $ref: "#/definitions/Goal"
+              responseData:
+                $ref: "#/definitions/ResponseData"
+                
   
   /goals/acknowledgeSplashPage:
     post:
@@ -411,6 +420,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/definitions/TeamMemberDetails"
+              responseData:
+                $ref: "#/definitions/ResponseData"
 
   /goals/prepareFirstTimeGoalSetting:
     post:
@@ -676,6 +687,8 @@ definitions:
         type: array
         items: 
           $ref: "#/definitions/Goal"
+      responseData:
+        $ref: "#/definitions/ResponseData"
             
   GoalsForCategory:
     type: object
@@ -709,7 +722,9 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/GoalsForCategory"
-          
+      responseData:
+        $ref: "#/definitions/ResponseData"
+
   KeyValuePair:
     type: object
     properties:
