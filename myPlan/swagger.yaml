@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.12"
+  version: "1.0.17"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -72,33 +72,50 @@ paths:
           schema:  
             $ref: "#/definitions/UserData" 
             
-
-#######################################################################################################
-#######################################################################################################
-############################################ Goals ####################################################
-#######################################################################################################
-#######################################################################################################
-
-
-  /goals/getGoalProcessDetails:
+  /employee/getTeamMemberDetails:
     get:
       tags:
-      - "goals"
-      summary: "Retrieves the process details to a user to show which process step and wizard step are current"
-      operationId: getGoalProcessDetails
+      - "employee"
+      summary: "Retrieves the Team Members for a Team Leader, including the stage of the Goal Setting Process"
+      operationId: getTeamMemberDetails
       parameters:
-      - name: "userName"
+      - name: "goalPlanTemplateId"
         in: "query"
-        description: "the username to retrieve values for"
-        required: false
+        description: "the goal plan template Id for which to execute the preparation"
+        required: true
         type: string
+      - name: "readGoalStage"
+        in: "query"
+        description: "If the parameter is present and true, the Goal Stage should be read"
+        required: false
+        type: boolean
+      - name: "checkIsMemberTeamLead"
+        in: "query"
+        description: "If the parameter is present and true, checks whether the team member is also a team lead"
+        required: false
+        type: boolean
       produces:
       - "application/json"
       responses:
         200:
           description: "successful operation"
           schema:  
-            $ref: "#/definitions/ProcessDetails"
+            type: object
+            title: teamMembers
+            properties:
+              teamMembers:
+                type: array
+                items:
+                  $ref: "#/definitions/TeamMemberDetails"
+              responseData:
+                $ref: "#/definitions/ResponseData"
+            
+
+#######################################################################################################
+#######################################################################################################
+############################################ Goals ####################################################
+#######################################################################################################
+#######################################################################################################
 
 
   /goals/getGoalTemplateId:
@@ -153,35 +170,6 @@ paths:
           schema: 
             $ref: "#/definitions/GoalPlanPicklistsResponse"
             
-  /goals/getGoalsForUserByCategory:
-    get:
-      tags:
-      - "goals"
-      summary: "Returns all goals stored against a goal plan for a specific user in a selected year"
-      operationId: getGoalsForUserByCategory
-      parameters:
-      - name: "userName"
-        in: "query"
-        description: "the username to retrieve values for"
-        required: false
-        type: string
-      - name: "goalTemplateId"
-        in: "query"
-        description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template "
-        required: false
-        type: string
-      - name: "categoryId"
-        in: "query"
-        description: "The category that the result should be limited to"
-        required: false
-        type: string      
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/GoalsForUser"
 
   /goals/getGoalsForUserFlat:
     get:
@@ -213,29 +201,6 @@ paths:
           schema:  
             $ref: "#/definitions/Goals"
 
-
-  /goals/upsertGoalsByCategory:
-    post:
-      tags:
-      - "goals"
-      summary: "Upsert one or many goals against SuccessFactors"
-      operationId: upsertGoalsByCategory
-      parameters:
-      - name: "goals"
-        in: "body"
-        description: "the goals to import"
-        required: true
-        schema: 
-          $ref: "#/definitions/GoalsForUser"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ResponseData"
 
   /goals/upsertGoalsFlat:
     post:
@@ -352,13 +317,8 @@ paths:
         200:
           description: "successful operation"
           schema:  
-            type: object
-            title: exampleGoal
-            properties:
-              exampleGoal:
-                $ref: "#/definitions/Goal"
-              responseData:
-                $ref: "#/definitions/ResponseData"
+            $ref: "#/definitions/Goals"
+              
                 
   
   /goals/acknowledgeSplashPage:
@@ -385,43 +345,6 @@ paths:
           schema:
             $ref: "#/definitions/ResponseData"
               
-  /employee/getTeamMemberDetails:
-    get:
-      tags:
-      - "employee"
-      summary: "Retrieves the Team Members for a Team Leader, including the stage of the Goal Setting Process"
-      operationId: getTeamMemberDetails
-      parameters:
-      - name: "goalPlanTemplateId"
-        in: "query"
-        description: "the goal plan template Id for which to execute the preparation"
-        required: true
-        type: string
-      - name: "readGoalStage"
-        in: "query"
-        description: "If the parameter is present and true, the Goal Stage should be read"
-        required: false
-        type: boolean
-      - name: "checkIsMemberTeamLead"
-        in: "query"
-        description: "If the parameter is present and true, checks whether the team member is also a team lead"
-        required: false
-        type: boolean
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            type: object
-            title: teamMembers
-            properties:
-              teamMembers:
-                type: array
-                items:
-                  $ref: "#/definitions/TeamMemberDetails"
-              responseData:
-                $ref: "#/definitions/ResponseData"
 
   /goals/prepareFirstTimeGoalSetting:
     post:
@@ -454,6 +377,155 @@ paths:
             $ref: "#/definitions/ResponseData"
         204:
           description: "Preparation already performed"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
+  /goals/getApplicationState:
+    get:
+      tags:
+      - "goals"
+      summary: "Retrieves the state of the application, both for Wizard as well as for Goal Plan"
+      operationId: getApplicationState
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the user for which to query the state"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: applicationState
+            properties:
+              goalPlanState:
+                type: string
+              onboardingWizardState:
+                type: string
+
+  
+  /goals/shareWithTeamLead:
+    post:
+      tags:
+      - "goals"
+      summary: "This operation is used to share all goals with the Team Lead and send the respective notifications"
+      operationId: shareWithTeamLead
+      parameters:
+      - name: "goals"
+        in: "body"
+        description: "the Goals to share"
+        required: true
+        schema:
+          $ref: "#/definitions/Goals"
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
+
+  /goals/updateLastCompletedWizardStep:
+    post:
+      tags:
+      - "goals"
+      summary: "This operation updates the last completed wizard step for the user"
+      operationId: updateLastCompletedWizardStep
+      parameters:
+      - name: "step"
+        in: "query"
+        description: "the last completed wizard step for the user"
+        required: true
+        type: string
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
+  /goals/saveGoalUpdates:
+    post:
+      tags:
+      - "goals"
+      summary: "The operation saveGoalUpdates is called when the Team Member is editing a Goal in the Goal review page and saves those changes."
+      operationId: saveGoalUpdates
+      parameters:
+      - name: "goal"
+        in: "body"
+        description: "the Goal to update"
+        required: true
+        schema:
+          $ref: "#/definitions/Goal"
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
+  /goals/deleteCustomGoal:
+    post:
+      tags:
+      - "goals"
+      summary: "The operation deleteCustomGoal is called when the Team Member is deleting a custom Goal. This only works for Custom Goals which are still in Draft status. Not possible in other cases."
+      operationId: deleteCustomGoal
+      parameters:
+      - name: "goalId"
+        in: "query"
+        description: "the id of the Goal to delete"
+        required: true
+        type: string
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
           schema:
             $ref: "#/definitions/ResponseData"
           
@@ -564,6 +636,14 @@ definitions:
         type: string
       jobId:
         type: string
+      positionTitle:
+        type: string
+      positionId:
+        type: string
+      brandTitle:
+        type: string
+      brandId:
+        type: string
       department:
         type: string
       departmentId:
@@ -572,26 +652,18 @@ definitions:
         type: string
       mimeType:
         type: string
-      division:
-        type: string
       businessUnitId:
         type: string
       businessUnit:
         description: "custom08-businessUnit of the user"
         type: string
       
-  ProcessDetails:
-    type: object
-    properties:
-      processStep:
-        type: string
-      wizardStep:
-        type: string
-
   MeasureOfSuccess:
     type: object
     properties:
-      description:
+      desc:
+        type: string
+      id:
         type: string
       done:
         description: "Percent complete of the Goal"
@@ -660,13 +732,12 @@ definitions:
         type: string
       startDate:
         type: string
-        format: date
       dueDate:
         type: string
-        format: date
       hasChanged:
         type: string
-        format: boolean
+      goalRemovalComment:
+        type: string
       measuresOfSuccess:
         type: array
         items:
@@ -758,7 +829,7 @@ definitions:
       goalSettingStage:
         type: string
   
-  GoalPlanTemplate:
+  GoalPlanTemplate: 
     type: object
     properties:
       planId:
