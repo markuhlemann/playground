@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.19"
+  version: "1.0.21"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -538,11 +538,12 @@ paths:
       summary: "The operation requestGoalRemoval is called when the Team Member is requesting the removal of a goal. This can happen from the Goals Review page as well as from the Onboarding Wizard."
       operationId: requestGoalRemoval
       parameters:
-      - name: "goalId"
-        in: "query"
-        description: "the id of the Goal to request removal for"
+      - name: "goal"
+        in: "body"
+        description: "The goal for which removal is requested"
         required: true
-        type: string
+        schema:
+          $ref: "#/definitions/Goal"
       - name: "goalPlanTemplateId"
         in: "query"
         description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
@@ -554,11 +555,15 @@ paths:
         201:
           description: "operation successful"
           schema:
-            $ref: "#/definitions/ResponseData"
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
         500:
           description: "error during update"
           schema:
-            $ref: "#/definitions/ResponseData"
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
 
   /goals/cascadeGoalToTeamMembers:
     post:
@@ -577,6 +582,11 @@ paths:
         in: "query"
         description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
         required: false
+        type: string
+      - name: "teamMember"
+        in: "query"
+        description: "the username of the team member for whom goal is cascaded"
+        required: true
         type: string
       produces:
       - "application/json"
@@ -670,8 +680,78 @@ paths:
           description: "error during update"
           schema:
             $ref: "#/definitions/ResponseData"
+
+  /development/getDevelopmentGoals:
+    get:
+      tags:
+      - "development"
+      summary: "Retrieves the development goals which are defined for a Team Member"
+      operationId: getDevelopmentGoals
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the user for which to query the development plan goals"
+        required: true
+        type: string
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: devGoalsResult
+            properties:
+              developmentGoals:
+                type: array
+                items:
+                  $ref: "#/definitions/DevelopmentGoal"
+              availableStatuses:
+                type: array
+                items:
+                  $ref: "#/definitions/DevelopmentGoalStatus"
               
+  /development/upsertDevelopmentGoals:
+    post:
+      tags:
+      - "development"
+      summary: "This operation upserts the development goals of the logged in user"
+      operationId: upsertDevelopmentGoals
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      - name: "developmentGoals"
+        in: "body"
+        description: "The development Goals to upsert"
+        required: true
+        schema: 
+          type: object
+          properties: 
+            developmentGoals:
+              type: array
+              items:
+                $ref: "#/definitions/DevelopmentGoal"
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData"
     
+  
 #######################################################################################################
 #######################################################################################################
 ############################################ Definitions ##############################################
@@ -881,6 +961,8 @@ definitions:
         type: string
       goalRemovalComment:
         type: string
+      goalSendfeedback:
+        type: string
       measuresOfSuccess:
         type: array
         items:
@@ -981,6 +1063,60 @@ definitions:
         type: string
       picklists:
         $ref: "#/definitions/GoalPlanPicklists"
+        
+  DevelopmentGoal:
+    type: object
+    properties:
+      id:
+        type: string
+      name: 
+        type: string
+        description: "Stores the title of the goal"
+      visibility:
+        type: boolean
+      createdBy:
+        type: string
+      createdOn:
+        type: string
+      startDate:
+        type: string
+      dueDate:
+        type: string
+      measure:
+        type: string
+      category:
+        type: string
+      statusKey:
+        type: string
+      availableStatuses:
+        type: object
+        properties:
+          key: 
+            type: string
+          value:
+            type: string
+          isSelected:
+            type: boolean
+
+  DevelopmentGoalList:
+    type: object
+    properties:
+      developmentGoals:
+        type: array
+        items:
+          $ref: "#/definitions/DevelopmentGoal"
+      availableStatuses:
+        type: array
+        items:
+          $ref: "#/definitions/DevelopmentGoalStatus"
+          
+  DevelopmentGoalStatus:
+    type: object
+    properties:
+      statusKey:
+        type: string
+      statusLabel:
+        type: string
         
 externalDocs:
   description: "Find out more about Swagger"
