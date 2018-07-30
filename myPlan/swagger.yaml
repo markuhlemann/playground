@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.22"
+  version: "1.0.24"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -12,30 +12,6 @@ schemes:
 - "http"
 paths:
 
-
-  /employee/Picklist2:
-    get:
-      tags:
-      - "employee"
-      operationId: getPicklist
-      produces: 
-      - "application/json"
-      parameters: 
-      - name: "picklistId"
-        in: "query"
-        description: "The Id of the picklist to read"
-        required: true
-        type: "string"
-      - name: "parent"
-        in: "query"
-        description: "In case it is a nested picklist, the partent Id"
-        required: false
-        type: "string"            
-      responses:
-        default:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/Picklist"
 
   /employee/version:
     get:
@@ -110,6 +86,31 @@ paths:
               responseData:
                 $ref: "#/definitions/ResponseData"
                 
+
+  /employee/sendEmailNotification:
+    post:
+      tags:
+      - "employee"
+      summary: "Sends an email notification to the user"
+      operationId: sendEmailNotification
+      parameters:
+      - name: "recipient"
+        in: "query"
+        description: "the recipient of the email"
+        required: true
+        type: string
+      - name: "notificationType"
+        in: "query"
+        description: "The Type of notification. Possible values are ..."
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ResponseData"
 
 
 #######################################################################################################
@@ -292,11 +293,6 @@ paths:
       summary: "Retrieves the Example Goal for a specific business unit and for a category"
       operationId: getExampleGoalForCategory
       parameters:
-      - name: "positionId"
-        in: "query"
-        description: "The positionId of the user for which the Example Goals should be retrieved."
-        required: false
-        type: string
       - name: "category"
         in: "query"
         description: "the category to which to select the Example Goal for"
@@ -310,6 +306,11 @@ paths:
       - name: "goalPlanTemplateId"
         in: "query"
         description: "the goalPlanTemplateId to which to select the Example Goal for"
+        required: true
+        type: string
+      - name: "opsCategoryID"
+        in: "query"
+        description: "cust_OpsSupportCategoryID to determine Example Goal and Assigned Goal"
         required: true
         type: string
       produces:
@@ -359,16 +360,12 @@ paths:
         description: "the goal plan template Id for which to execute the preparation"
         required: true
         type: string
-      - name: "positionID"
+      - name: "userName"
         in: "query"
-        description: "the goal plan template Id for which to execute the preparation"
+        description: "the User Name which to execute the preparation"
         required: true
         type: string
-      - name: "brandID"
-        in: "query"
-        description: "the goal plan template Id for which to execute the preparation"
-        required: true
-        type: string
+      
       produces:
       - "application/json"
       responses:
@@ -406,7 +403,8 @@ paths:
                 type: string
               onboardingWizardState:
                 type: string
-
+              responseData:
+                $ref: "#/definitions/ResponseData"
   
   /goals/shareWithTeamLead:
     post:
@@ -681,6 +679,48 @@ paths:
           schema:
             $ref: "#/definitions/ResponseData"
 
+  /goals/cancelRemovalRequest:
+    post:
+      tags:
+      - "goals"
+      summary: "This operation cancels a removal request and updates the status of the Goal depending on the Goal Plan status"
+      operationId: cancelRemovalRequest
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      - name: "goal"
+        in: "body"
+        description: "The Goal to update"
+        required: true
+        schema: 
+          $ref: "#/definitions/Goal"
+      - name: "goalPlanState"
+        in: "query"
+        description: "The state of the goal plan"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
+
+#############################################################################################
+#############################################################################################
+################################## Development ##############################################
+#############################################################################################
+#############################################################################################
+
   /development/getDevelopmentGoals:
     get:
       tags:
@@ -715,6 +755,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/definitions/DevelopmentGoalStatus"
+              responseData:
+                $ref: "#/definitions/ResponseData"
               
   /development/upsertDevelopmentGoals:
     post:
@@ -728,17 +770,41 @@ paths:
         description: "the goal plan template Id for which to execute the preparation"
         required: false
         type: string
-      - name: "developmentGoals"
+      - name: "developmentGoal"
         in: "body"
         description: "The development Goals to upsert"
         required: true
-        schema: 
-          type: object
-          properties: 
-            developmentGoals:
-              type: array
-              items:
-                $ref: "#/definitions/DevelopmentGoal"
+        schema:
+           $ref: "#/definitions/DevelopmentGoal"
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+              $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+              $ref: "#/definitions/ResponseData"
+              
+  /development/deleteDevelopmentGoal:
+    delete:
+      tags:
+      - "development"
+      summary: "The operation deleteDevelopmentGoal is called when the Team Member is deleting a development Goal. This only works for Development Goals which are still in Draft status. Not possible in other cases."
+      operationId: deleteDevelopmentGoal
+      parameters:
+      - name: "goalId"
+        in: "query"
+        description: "the id of the Development Goal to delete"
+        required: true
+        type: string
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
       produces:
       - "application/json"
       responses:
@@ -750,7 +816,10 @@ paths:
           description: "error during update"
           schema:
             $ref: "#/definitions/ResponseData"
+            
     
+  
+  
   
 #######################################################################################################
 #######################################################################################################
@@ -772,44 +841,6 @@ definitions:
         type: "string"  
     xml:
       name: "User"    
-
-  Picklist:
-    type: "object"
-    properties:
-      PickListValues:
-        type: array
-        items:
-          $ref: '#/definitions/PicklistOption'
-  
-  PicklistOption:
-    type: object
-    properties:
-      label:
-        type: string
-      picklistId:
-        type: string
-      picklistOptionId:
-        type: string
-      externalCode:
-        type: string
-      locale: 
-        type: string
-        
-  PicklistOptionWithBGElement:
-    type: object
-    properties:
-      backgroundElementId:
-        type: string
-      label:
-        type: string
-      picklistId:
-        type: string
-      picklistOptionId:
-        type: string
-      externalCode:
-        type: string
-      locale: 
-        type: string      
 
   Email:
     type: object
@@ -875,9 +906,9 @@ definitions:
         type: string
       mimeType:
         type: string
-      businessUnitId:
+      opsSupportCategoryId:
         type: string
-      businessUnit:
+      opsSupportCategory:
         description: "custom08-businessUnit of the user"
         type: string
       
@@ -1074,13 +1105,21 @@ definitions:
         description: "Stores the title of the goal"
       visibility:
         type: boolean
-      createdBy:
+      hasStartDate:
+        type: boolean
+      modifiedBy:
         type: string
-      createdOn:
+      currentOwner:
         type: string
       startDate:
         type: string
       dueDate:
+        type: string
+      lastModifiedDate:
+        type: string
+      state:
+        type: string
+      type:
         type: string
       measure:
         type: string
@@ -1111,4 +1150,4 @@ definitions:
         
 externalDocs:
   description: "Find out more about Swagger"
-  url: "http://swagger.io"
+  url: "http://swagger.io" 
