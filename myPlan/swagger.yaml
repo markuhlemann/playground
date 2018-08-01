@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.24"
+  version: "1.0.27"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -47,6 +47,32 @@ paths:
           description: "successful operation"
           schema:  
             $ref: "#/definitions/UserData" 
+
+  /employee/getUserPhoto:
+    get:
+      tags:
+      - "employee"
+      summary: "Returns the User details for the logged in User"
+      operationId: getUserPhoto
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the username to retrieve values for"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: userPhoto
+            properties:
+              photo:
+                type: string
+              mimeType:
+                type: string            
             
   /employee/getTeamMemberDetails:
     get:
@@ -111,6 +137,43 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ResponseData"
+
+
+  /employee/checkAccess:
+    get:
+      tags:
+      - "employee"
+      summary: "Checks the access to the My Plan application. This should only be accessible to salaried employees. This operation checks for the group XXX to be assigned in SuccessFactors."
+      operationId: checkAccess
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "access granted"
+        403: 
+          description: "not a salaried employee"
+
+  /employee/resetTestUser:
+    get:
+      tags:
+      - "employee"
+      summary: "Resets the test user and removes all goals. This is only available on non-production systems"
+      operationId: resetTestUser
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "the username to reset the goals for"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
 
 
 #######################################################################################################
@@ -451,6 +514,16 @@ paths:
         in: "query"
         description: "the last completed wizard step for the user"
         required: true
+        type: string
+      - name: "firstName"
+        in: "query"
+        description: "the first name of the user"
+        required: false
+        type: string
+      - name: "lastName"
+        in: "query"
+        description: "the last name of the user"
+        required: false
         type: string
       - name: "goalPlanTemplateId"
         in: "query"
@@ -993,6 +1066,8 @@ definitions:
       goalRemovalComment:
         type: string
       goalSendfeedback:
+        type: string
+      customOverallComments:
         type: string
       measuresOfSuccess:
         type: array
