@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.27"
+  version: "1.0.28"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -47,6 +47,8 @@ paths:
           description: "successful operation"
           schema:  
             $ref: "#/definitions/UserData" 
+        417:
+          description: "Critical User details couldn't be read that are a prerequisite for further operations"
 
   /employee/getUserPhoto:
     get:
@@ -468,6 +470,8 @@ paths:
                 type: string
               responseData:
                 $ref: "#/definitions/ResponseData"
+        417:
+          description: "Failed to load application state"
   
   /goals/shareWithTeamLead:
     post:
