@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.28"
+  version: "1.0.29"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -718,12 +718,12 @@ paths:
             items:
               $ref: "#/definitions/ResponseData"
               
-  /goals/sendBackFeedback:
+  /goals/sendBackFeedback_old:
     post:
       tags:
       - "goals"
       summary: "The operation sendBackFeedback is called when the Team Leader is NOT acknowledging the Goals for the Team Member, but instead sends it back to the Team Member with comments."
-      operationId: sendBackFeedback
+      operationId: sendBackFeedback_old
       parameters:
       - name: "userName"
         in: "query"
@@ -756,6 +756,40 @@ paths:
           schema:
             $ref: "#/definitions/ResponseData"
 
+  /goals/sendBackFeedback:
+    post:
+      tags:
+      - "goals"
+      summary: "The operation sendBackFeedback is called when the Team Leader is NOT acknowledging the Goals for the Team Member, but instead sends it back to the Team Member with comments."
+      operationId: sendBackFeedback
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "The username of the Team Member for which the feedback is intended"
+        required: true
+        type: string
+      - name: "feedbackGoal"
+        in: "body"
+        description: "The comment of the feedback for the Team Member"
+        required: true
+        schema: 
+          $ref: "#/definitions/Goal"
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData"
   /goals/cancelRemovalRequest:
     post:
       tags:
@@ -988,6 +1022,8 @@ definitions:
       opsSupportCategory:
         description: "custom08-businessUnit of the user"
         type: string
+      isTeamLead:
+        type: boolean
       
   MeasureOfSuccess:
     type: object
