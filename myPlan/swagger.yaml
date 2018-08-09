@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.29"
+  version: "1.0.33"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -718,44 +718,6 @@ paths:
             items:
               $ref: "#/definitions/ResponseData"
               
-  /goals/sendBackFeedback_old:
-    post:
-      tags:
-      - "goals"
-      summary: "The operation sendBackFeedback is called when the Team Leader is NOT acknowledging the Goals for the Team Member, but instead sends it back to the Team Member with comments."
-      operationId: sendBackFeedback_old
-      parameters:
-      - name: "userName"
-        in: "query"
-        description: "The username of the Team Member for which the feedback is intended"
-        required: true
-        type: string
-      - name: "feedbackComment"
-        in: "body"
-        description: "The comment of the feedback for the Team Member"
-        required: true
-        schema: 
-          type: object
-          properties: 
-            feedbackComment:
-              type: string
-      - name: "goalPlanTemplateId"
-        in: "query"
-        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
-        required: false
-        type: string
-      produces:
-      - "application/json"
-      responses:
-        201:
-          description: "operation successful"
-          schema:
-            $ref: "#/definitions/ResponseData"
-        500:
-          description: "error during update"
-          schema:
-            $ref: "#/definitions/ResponseData"
-
   /goals/sendBackFeedback:
     post:
       tags:
@@ -768,12 +730,16 @@ paths:
         description: "The username of the Team Member for which the feedback is intended"
         required: true
         type: string
-      - name: "feedbackGoal"
+      - name: "feedbackGoalInput"
         in: "body"
         description: "The comment of the feedback for the Team Member"
         required: true
         schema: 
-          $ref: "#/definitions/Goal"
+          type: object
+          title: feedbackGoalInput
+          properties:
+            feedbackGoal:
+              $ref: "#/definitions/Goal"
       - name: "goalPlanTemplateId"
         in: "query"
         description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
@@ -824,6 +790,71 @@ paths:
           description: "error during update"
           schema:
             $ref: "#/definitions/ResponseData"
+            
+  /goals/updateGoalVisibility:
+    post:
+      tags:
+      - "goals"
+      summary: "The operation updateGoalVisibility is called when the Team Member is editing a Goal flag to Private or Public."
+      operationId: updateGoalVisibility
+      parameters:
+      - name: "goal"
+        in: "body"
+        description: "the Goal to update"
+        required: true
+        schema:
+          $ref: "#/definitions/GoalShort"
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData"          
+
+  /goals/addFeedbackToGoal:
+    post:
+      tags:
+      - "goals"
+      summary: "Adding feedback to a goal"
+      operationId: addFeedbackToGoal
+      parameters:
+      - name: "goal"
+        in: "body"
+        description: "the Goal where the comment should be added"
+        required: true
+        schema:
+          $ref: "#/definitions/Goal"
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
+      - name: "feedback"
+        in: "query"
+        description: "the feedback to be added"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData" 
 
 
 #############################################################################################
@@ -1022,9 +1053,7 @@ definitions:
       opsSupportCategory:
         description: "custom08-businessUnit of the user"
         type: string
-      isTeamLead:
-        type: boolean
-      
+
   MeasureOfSuccess:
     type: object
     properties:
@@ -1121,7 +1150,16 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/AvailableTag"
-
+          
+  GoalShort:
+    type: object
+    properties:
+      id:
+        type: string
+      visibility:
+        type: boolean
+        description: "Updates permissions/privateAccess"
+      
   Goals:
     type: object
     properties:
