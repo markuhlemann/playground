@@ -1,191 +1,246 @@
 swagger: "2.0"
 info:
+
   description: "This is the API definition for the Talent Acquisition and Onboarding solution. Based on SuccessFactors Recruitment Management, intended for Candidates and Hiring Managers"
-  version: "1.0.52"
+  version: "2.0.2"
   title: "Talent Acquisition and Onboarding"
 host: "my.wowcareers.com.au"
 basePath: "/"
+
 tags:
-- name: "candidate"
-  description: "Everything about Candidate Profile"
-- name: "application"
-  description: "Services around the opportunities presented to the Candidate and Application"
-- name: "monitoring"
-  description: "Allows to monitor the performance and availability of the system"
+  - name: candidate
+    description: Everything about Candidate Profile
+  - name: application
+    description: >-
+      Services around the opportunities presented to the Candidate and
+      Application
+  - name: monitoring
+    description: Allows to monitor the performance and availability of the system
 schemes:
-- "http"
+  - http
 paths:
+ 
   
-  /candidate/createCandidate:
-    post:
-      tags:
-      - "candidate"
-      summary: "Creates a Candidate"
-      description: "Creates a candidate in SuccessFactors"
-      operationId: "createCandidate"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "candidateData"
-        description: "Posted candidate object"
-        required: true 
-        schema:
-            $ref: "#/definitions/UpsertCandidate"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"    
-  
-  /candidate/upsertCandidate:
-    post:
-      tags:
-      - "candidate"
-      summary: "Updates a candidate"
-      description: "Updates the candidate in SuccessFactors."
-      operationId: "upsertCandidate"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "candidateData"
-        description: "Posted candidate object"
-        required: true 
-        schema:
-            $ref: "#/definitions/UpsertCandidate"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"    
-  
-  /candidate/resetPassword:
-    post:
-      tags:
-      - "candidate"
-      summary: "Resets the password of the candidate on the Candidate Entity"
-      operationId: "resetPassword"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "password"
-        in: "body"
-        description: "The password to reset"
-        required: true
-        schema:
-          $ref: "#/definitions/CandidatePassword"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"    
-  
-  /candidate/upsertPreferredStores:
-    post:
-      tags:
-      - "candidate"
-      summary: "Updates candidate Preferred Stores"
-      description: "Update the candidate Preferred Stores."
-      operationId: "upsertPreferredStores"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "candidateData"
-        description: "Posted candidate object"
-        required: true
-        schema:
-            $ref: "#/definitions/UpsertCandidate"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"    
-          
-  /candidate/exists:
+  /candidate/getBrandToReqTemplateId:
     get:
       tags:
       - "candidate"
-      summary: "Get candidate by candidate email"
-      description: check whether a candidate already exists
-      operationId: checkCandidateExists
+      summary: "Retrieves the Brand to the Requisition Template ID provided"
+      operationId: getBrandToReqTemplateId
       produces:
       - "application/json"
       parameters:
-      - name: "primaryEmail"
+      - name: "requisitionTemplateId"
         in: "query"
-        description: "the primary email of the candidate"
+        description: "the requisition template Id to get the brand for"
         required: true
         type: string
       responses:
         200:
           description: "successful operation"
           schema:  
+            type: string
+
+  
+  /candidate/createCandidate:
+    post:
+      tags:
+        - candidate
+      summary: Creates a Candidate
+      description: Creates a candidate in SuccessFactors
+      operationId: createCandidate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: candidateData
+          description: Posted candidate object
+          required: true
+          schema:
+            $ref: '#/definitions/UpsertCandidate'
+        - in: "query"
+          name: "brand"
+          description: "Name of the Brand"
+          required: true
+          type: string             
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
+  /candidate/upsertCandidate:
+    post:
+      tags:
+        - candidate
+      summary: Updates a candidate
+      description: Updates the candidate in SuccessFactors.
+      operationId: upsertCandidate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: candidateData
+          description: Posted candidate object
+          required: true
+          schema:
+            $ref: '#/definitions/UpsertCandidate'
+        - in: "query"
+          name: "brand"
+          description: "Name of the Brand"
+          required: true
+          type: string                 
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
+  /candidate/resetPassword:
+    post:
+      tags:
+        - candidate
+      summary: Resets the password of the candidate on the Candidate Entity
+      operationId: resetPassword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: password
+          in: body
+          description: The password to reset
+          required: true
+          schema:
+            $ref: '#/definitions/CandidatePassword'
+        - in: "query"
+          name: "brand"
+          description: "Name of the Brand"
+          required: true
+          type: string             
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+  
+  /candidate/upsertPreferredStores:
+    post:
+      tags:
+        - candidate
+      summary: Updates candidate Preferred Stores
+      description: Update the candidate Preferred Stores.
+      operationId: upsertPreferredStores
+      produces:
+        - application/json
+      parameters:
+      - in: "body"
+        name: "candidateData"
+        description: "Posted candidate object"
+        required: true
+        schema:
+            $ref: "#/definitions/UpsertCandidate"
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string             
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
+  /candidate/exists:
+    get:
+      tags:
+        - candidate
+      summary: Get candidate by candidate email
+      description: check whether a candidate already exists
+      operationId: checkCandidateExists
+      produces:
+        - application/json
+      parameters:
+        - name: primaryEmail
+          in: query
+          description: the primary email of the candidate
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
             title: candidateExists
             type: boolean
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found" 
-
-
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
   /candidate/uploadResume:
     post:
       tags:
-      - "candidate"
-      summary: "Uploads the candidate Resume"
-      description: "Uploads the candidate Resume."
-      operationId: "uploadResume"
+        - candidate
+      summary: Uploads the candidate Resume
+      description: Uploads the candidate Resume.
+      operationId: uploadResume
       consumes:
-      - "multipart/form-data"
+        - multipart/form-data
       produces:
-      - "application/json"
+        - application/json
       parameters:
       - in: "formData"
         name: "attachment"
         description: "File Attachment"
         required: true
         type: file
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string          
       responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/UploadResume"
-        400:
-          description: "Invalid candidate id supplied"
-        404:
-          description: "Upload went wrong"   
-  
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/UploadResume'
+        '400':
+          description: Invalid candidate id supplied
+        '404':
+          description: Upload went wrong
+        
+        
   /candidate/uploadSupportingDocument:
     post:
       tags:
-      - "candidate"
-      summary: "Uploads the supporting document"
-      description: "Uploads the supporting document."
-      operationId: "uploadSupportingDocument"
+        - candidate
+      summary: Uploads the supporting document
+      description: Uploads the supporting document.
+      operationId: uploadSupportingDocument
       consumes:
-      - "multipart/form-data"
+        - multipart/form-data
       produces:
-      - "application/json"
+        - application/json
       parameters:
       - in: "query"
         name: "applicationId"
@@ -202,6 +257,11 @@ paths:
         description: "Right to Work document"
         required: false
         type: file
+      - in: formData
+        name: rightToWorkOtherDoc
+        description: Responsible Service of Alcohol
+        required: false
+        type: file
       - in: "formData"
         name: "tradeCertificateDoc"
         description: "Trade Certificate Attachment"
@@ -209,7 +269,7 @@ paths:
         type: file
       - in: "formData"
         name: "driverLicenseDoc"
-        description: "Forklift Driver’s License Attachment"
+        description: "Forklift Driverâ€™s License Attachment"
         required: false
         type: file
       - in: "formData"
@@ -217,251 +277,321 @@ paths:
         description: "Responsible Service of Alcohol"
         required: false
         type: file
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-
-  /candidate/upsertAvatar:
-    post:
-      tags:
-      - "candidate"
-      summary: "Uploads the Avatar profile image to the Candidate Entity"
-      operationId: "upsertAvatar"
-      consumes:
-      - "multipart/form-data"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "formData"
-        name: "attachment"
-        description: "File Attachment"
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
         required: true
-        type: file
+        type: string          
       responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid candidate id supplied"
-        404:
-          description: "Candidate not found"    
-
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
   /candidate/Picklist2:
     get:
       tags:
-      - "candidate"
+        - candidate
       operationId: getPicklist
-      produces: 
-      - "application/json"
-      parameters: 
-      - name: "picklistId"
-        in: "query"
-        description: "The Id of the picklist to read"
-        required: true
-        type: "string"
-      - name: "parent"
-        in: "query"
-        description: "In case it is a nested picklist, the partent Id"
-        required: false
-        type: "string"            
+      produces:
+        - application/json
+      parameters:
+        - name: picklistId
+          in: query
+          description: The Id of the picklist to read
+          required: true
+          type: string
+        - name: parent
+          in: query
+          description: 'In case it is a nested picklist, the partent Id'
+          required: false
+          type: string
       responses:
         default:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/Picklist"
-
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Picklist'
+            
+            
   /candidate/Picklist2/getOptionByExternalCode:
     get:
       tags:
-      - "candidate"
+        - candidate
       operationId: getPicklistOptionByExternalCode
-      produces: 
-      - "application/json"
-      parameters: 
-      - name: "picklistId"
-        in: "query"
-        description: "The Id of the picklist to read"
-        required: true
-        type: "string"
-      - name: "externalCode"
-        in: "query"
-        description: "The external code of the value to be retrieved"
-        required: false
-        type: "string"            
+      produces:
+        - application/json
+      parameters:
+        - name: picklistId
+          in: query
+          description: The Id of the picklist to read
+          required: true
+          type: string
+        - name: externalCode
+          in: query
+          description: The external code of the value to be retrieved
+          required: false
+          type: string
       responses:
         default:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/PicklistOption"
-            
+          description: successful operation
+          schema:
+            $ref: '#/definitions/PicklistOption'
   /candidate/Picklist2/cleanCache:
     get:
       tags:
-      - "candidate"
+        - candidate
       operationId: cleanPicklistCache
-      description: "Cleans the Picklist cache"
+      description: Cleans the Picklist cache
       produces:
-      - "application/json"
+        - application/json
       responses:
         default:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-          
-
-  /candidate/GenerateGTKYQuiz: 
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
+  /candidate/GenerateGTKYQuiz:
     get:
       tags:
-      - "candidate"
-      summary: "Generates the Getting to Know You Questions for a candidate"
-      operationId: "generateGTKYQuiz"
+        - candidate
+      summary: Generates the Getting to Know You Questions for a candidate
+      operationId: generateGTKYQuiz
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string        
       responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: successful operation
           schema:
             type: object
-
+            
+            
   /candidate/evaluateGTKYQuiz:
     post:
       tags:
-      - "candidate"
-      summary: "Evaluates the Getting to Know You Quiz"
-      operationId: "evaluateGTKYQuiz"
+        - candidate
+      summary: Evaluates the Getting to Know You Quiz
+      operationId: evaluateGTKYQuiz
       produces:
-      - "application/json"
+        - application/json
       parameters:
       - name: quizBody
         in: body
         required: true
         schema:
           type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string             
       responses:
-        200:
-          description: "successful operation"
-          schema:  
+        '200':
+          description: successful operation
+          schema:
             type: object
-
+            
+            
   /candidate/version:
     get:
       tags:
-      - "candidate"
-      summary: "Returns the version of the API layer"
+        - candidate
+      summary: Returns the version of the API layer
       operationId: getVersion
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string          
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
+
+
+  /candidate/brands:
+    get:
+      tags:
+      - "candidate"
+      summary: "Returns the available Brands in the System"
+      operationId: getBrands
       produces:
       - "application/json"
       responses:
         200:
           description: "successful operation"
           schema:  
-            type: string
-
+            $ref: "#/definitions/BrandList"
+            
+            
+  /candidate/dispositionData:
+    get:
+      tags:
+      - "candidate"
+      summary: "Returns the available disposition data from the database as per brand"
+      operationId: getDispositionData
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string     
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/DispositionConstantsList"          
+   
 
   /candidate/CandidateSummary:
     get:
       tags:
-      - "candidate"
-      summary: "Retrieving information for the Candidate"
+        - candidate
+      summary: Retrieving information for the Candidate
       operationId: getCandidateSummary
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string     
       responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/CandidateSummaryBody"
-
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/CandidateSummaryBody'
+            
+            
   /candidate/CandidateHeader:
     get:
       tags:
-      - "candidate"
-      summary: "Retrieving only the Header information of a Candidate (Firstname, Lastname)"
+        - candidate
+      summary: >-
+        Retrieving only the Header information of a Candidate (Firstname,
+        Lastname)
       operationId: getCandidateHeader
       produces:
-      - "application/json"
+        - application/json
       responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/CandidateHeader" 
-      
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/CandidateHeader'
+            
             
   /candidate/application/getAgenda:
     get:
       tags:
-      - "application"
+        - application
       summary: Retrieves the Agenda information for the Candidate
       operationId: getAgenda
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string      
       responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/CandidateAgendaList"
-
-
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/CandidateAgendaList'
+            
+            
   /candidate/myToDoList/jobsApplied:
     get:
       tags:
-      - "application"
-      summary: "Get candidates To Do List"
-      description: "Get candidates To Do data from SF according to the Stage"
+        - application
+      summary: Get candidates To Do List
+      description: Get candidates To Do data from SF according to the Stage
       operationId: getJobsApplied
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string      
       responses:
-        200:
-          description: "successful operation"
-          schema: 
+        '200':
+          description: successful operation
+          schema:
             title: applications
             type: array
             items:
-              $ref: "#/definitions/ApplicationDetails"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"            
-
+              $ref: '#/definitions/ApplicationDetails'
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
   /candidate/myToDoList/jobsInvited:
     get:
       tags:
-      - "application"
-      summary: "Get candidates To Do List"
-      description: "Get candidates To Do data from SF according to the Stage"
+        - application
+      summary: Get candidates To Do List
+      description: Get candidates To Do data from SF according to the Stage
       operationId: getJobsInvited
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string      
       responses:
-        200:
-          description: "successful operation"
-          schema: 
+        '200':
+          description: successful operation
+          schema:
             title: applications
             type: array
             items:
-              $ref: "#/definitions/ApplicationDetails"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"            
-
+              $ref: '#/definitions/ApplicationDetails'
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
   /candidate/myToDoList/profileTasks:
     get:
       tags:
-      - "application"
-      summary: "Get candidates To Do List"
-      description: "Get candidates To Do data from SF according to the Stage"
+        - application
+      summary: Get candidates To Do List
+      description: Get candidates To Do data from SF according to the Stage
       operationId: getToDoProfileTasks
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string      
       responses:
-        200:
-          description: "successful operation"
-          schema: 
+        '200':
+          description: successful operation
+          schema:
             title: ProfileToDoList
             type: object
             properties:
@@ -474,72 +604,131 @@ paths:
               missingWorkingPreferences:
                 type: boolean
               updateProfile:
-                type: boolean  
+                type: boolean
               date:
                 type: string
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"            
-   
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
   /candidate/removeAttachment:
     post:
       tags:
-      - "candidate"
-      summary: "Delete the attachment"
-      operationId: "removeAttachment"
+        - candidate
+      summary: Delete the attachment
+      operationId: removeAttachment
       parameters:
       - name: AttachmentInput
         in: body
         required: true
         schema:
           $ref: "#/definitions/AttachmentInputData"
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string       
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Deletion of Attachment failed
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
+  /candidate/fileDownloadList:
+    get:
+      tags:
+        - candidate
+      summary: List of items that can be downloaded
+      operationId: getFileDownloadList
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string       
       responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Deletion of Attachment failed"
-          schema: 
-            $ref: "#/definitions/ResponseData"         
-
-#######################################################################################################
-#######################################################################################################
-########################################### Application Operations ####################################
-#######################################################################################################
-#######################################################################################################
-    
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/FilesToDownloadList'
+            
+            
+  /candidate/getResumeId:
+    get:
+      tags:
+        - candidate
+      summary: Retrieves attached resume Id for the candidate
+      operationId: getCandidateResumeId
+      produces:
+        - application/json
+      parameters:
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string          
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            title: CandidateResume
+            type: object
+            properties:
+              cvAttachmentId:
+                type: string
+              cvAttachmentName:
+                type: string
+                
+                
   /candidate/application/candidateIsInterested:
     post:
       tags:
-      - "application"
-      summary: Creates a new Application Object, as the candidate is interested in the role
+        - application
+      summary: >-
+        Creates a new Application Object, as the candidate is interested in the
+        role
       operationId: updateCandidateIsInterested
       parameters:
       - name: requisitionId
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string       
       produces:
-      - "application/json"
+        - application/json
       responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Creation of JobApplication failed"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Creation of JobApplication failed
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
   /candidate/application/candidateIsNotInterested:
     post:
       tags:
-      - "application"
-      summary: Updates the JobApplication with the response from the Candidat whether he is interested or not
+        - application
+      summary: >-
+        Updates the JobApplication with the response from the Candidat whether
+        he is interested or not
       operationId: updateCandidateIsNotInterested
       parameters:
       - name: applicationData
@@ -547,23 +736,28 @@ paths:
         required: true
         schema:
           $ref: "#/definitions/CandidateNotInterestedInput"
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string            
       produces:
-      - "application/json"
+        - application/json
       responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Update of JobApplication failed"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-    
-  
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Update of JobApplication failed
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
   /candidate/application/getHFATestDetails:
     get:
       tags:
-      - "application"
+        - application
       summary: Retrieves the details of the Hire for Attitude test
       operationId: getHFATestDetails
       parameters:
@@ -571,18 +765,24 @@ paths:
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string            
       produces:
-      - "application/json"
+        - application/json
       responses:
-        200:
-          description: "successful operation, returns the link to the Hire for Attitude test"
-          schema: 
-            $ref: "#/definitions/HFATestDetails"
-        400:
-          description: "Update of JobApplication failed"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-    
+        '200':
+          description: 'successful operation, returns the link to the Hire for Attitude test'
+          schema:
+            $ref: '#/definitions/HFATestDetails'
+        '400':
+          description: Update of JobApplication failed
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+  
   /candidate/application/updateHFATestQuestion:
     post:
       tags:
@@ -601,6 +801,11 @@ paths:
         required: false
         schema:
           $ref: "#/definitions/HFAUpdateInput"
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string       
       responses:
         200:
           description: "successful operation"
@@ -611,11 +816,11 @@ paths:
           schema: 
             $ref: "#/definitions/ResponseData"
 
-
+  
   /candidate/application/offerAccepted:
     post:
       tags:
-      - "application"
+        - application
       summary: The Candidate accepts the offer that is extended to him
       operationId: acceptOffer
       parameters:
@@ -624,6 +829,11 @@ paths:
         required: true
         schema:
           $ref: "#/definitions/OfferAcceptedInput"
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string          
       produces:
       - "application/json"
       responses:
@@ -637,29 +847,139 @@ paths:
             $ref: "#/definitions/ResponseData"
 
 
-  /candidate/application/offerDeclined:
+  /candidate/application/preempChecksCompleted:
     post:
       tags:
       - "application"
-      summary: Declines the offer that has been extended to the candidate and updates SF with additional comments
+      summary: The Candidate accepts the offer that is extended to him
+      operationId: preempChecksCompleted
+      parameters:
+      - name: applicationId
+        in: query
+        required: true
+        type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string          
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Creation of JobApplication failed
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
+  /candidate/application/offerDeclined:
+    post:
+      tags:
+        - application
+      summary: >-
+        Declines the offer that has been extended to the candidate and updates
+        SF with additional comments
       operationId: declineOffer
       parameters:
-      - name: offerData
-        in: body
+        - name: offerData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OfferNotAcceptedInput'
+        - in: "query"
+          name: "brand"
+          description: "Name of the Brand"
+          required: true
+          type: string              
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Update of JobApplication failed
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
+  /candidate/application/upsertWorkEntitlement:
+    post:
+      tags:
+        - application
+      summary: Updates a candidate Work Entitlement
+      description: Updates a candidate right to work details in SuccessFactors.
+      operationId: upsertWorkEntitlement
+      produces:
+        - application/json
+      parameters:
+        - name: applicationId
+          in: query
+          required: true
+          type: string
+        - in: body
+          name: workEntitlementData
+          description: Posted workEntitlement object
+          required: true
+          schema:
+            $ref: '#/definitions/UpsertWorkEntitlement'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/WorkEntitlementResponse'
+        '404':
+          description: Application not found
+          
+          
+  /candidate/application/JobApplicationSummary:
+    get:
+      tags:
+        - application
+      summary: Retrieving information for the Job Application
+      operationId: getJobApplicationSummary
+      produces:
+        - application/json
+      parameters:
+        - name: applicationId
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/JobApplicationSummaryBody'
+            
+            
+  /candidate/application/getApplicationStageId:
+    get:
+      tags:
+      - "application"
+      summary: Retrieves the status code for the step in the talent pipeline, by brand and system
+      operationId: getApplicationStageId
+      parameters:
+      - name: brandId
+        in: query
         required: true
-        schema:
-          $ref: "#/definitions/OfferNotAcceptedInput"
+        type: string
       produces:
       - "application/json"
       responses:
         200:
-          description: "successful operation"
+          description: "successful operation, returns the link to the Hire for Attitude test"
           schema: 
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Update of JobApplication failed"
-          schema: 
-            $ref: "#/definitions/ResponseData"
+            type: object
+            title: appStatusCode
+            properties:
+              appStatusCode: 
+                type: string
+
 
 #######################################################################################################
 #######################################################################################################
@@ -667,22 +987,25 @@ paths:
 #######################################################################################################
 #######################################################################################################
 
+
   /hm/checkAccess:
     get:
       tags:
         - hiringmanager
       summary: >-
-        Checks whether the user has the right permissions to use the HiringManager application
+        Checks whether the user has the right permissions to use the
+        HiringManager application
       operationId: checkAccess
       produces:
         - application/json
       responses:
         '200':
           description: successful operation
-          schema:  
+          schema:
             title: hasAccess
             type: boolean
-
+            
+            
   /hm/searchCandidate:
     post:
       tags:
@@ -697,6 +1020,11 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/CandidateSearchInput'
+        - in: "query"
+          name: "brand"
+          description: "Name of the Brand"
+          required: true
+          type: string          
       produces:
         - application/json
       responses:
@@ -709,14 +1037,19 @@ paths:
   /hm/getScheduledInterviews:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the upcoming Interviews for the Hiring Manager"
+        - hiringmanager
+      summary: Retrieves the upcoming Interviews for the Hiring Manager
       operationId: getScheduledInterviews
       parameters:
       - name: hiringmanager
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string            
       produces:
         - application/json
       responses:
@@ -733,9 +1066,9 @@ paths:
                   type: string
                 interviewDate:
                   type: string
-                fullname: 
+                fullname:
                   type: string
-                candidateId: 
+                candidateId:
                   type: string
                 applicationId:
                   type: string
@@ -745,12 +1078,15 @@ paths:
                   type: string
                 completed:
                   type: boolean
-
+                  
+                  
   /hm/getInterviewSummary:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the details for the candidate interview details. In case there is no Application, then only Candidate related information"
+        - hiringmanager
+      summary: >-
+        Retrieves the details for the candidate interview details. In case there
+        is no Application, then only Candidate related information
       operationId: getInterviewSummary
       parameters:
       - name: candidateId
@@ -761,6 +1097,11 @@ paths:
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string            
       produces:
         - application/json
       responses:
@@ -770,7 +1111,7 @@ paths:
             title: interviewSummary
             type: object
             properties:
-              jobTitle: 
+              jobTitle:
                 type: string
               requisitionId:
                 type: string
@@ -794,18 +1135,24 @@ paths:
                 type: string
               wooliesFitDate:
                 type: string
-
+                
+                
   /hm/getAssessmentDetails:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the test details for GTKY and the Woolies Fit test"
+        - hiringmanager
+      summary: Retrieves the test details for GTKY and the Woolies Fit test
       operationId: getAssessmentDetails
       parameters:
       - name: candidateId
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
       produces:
         - application/json
       responses:
@@ -816,26 +1163,26 @@ paths:
             type: object
             properties:
               gtkyStatus:
-                $ref: "#/definitions/PicklistOption"
-              gtkyOverallScore: 
+                $ref: '#/definitions/PicklistOption'
+              gtkyOverallScore:
                 type: string
               gtkyOverallBenchmark:
-                $ref: "#/definitions/PicklistOption"
+                $ref: '#/definitions/PicklistOption'
               gtkyDate:
                 type: string
               gtkyAnswers:
                 type: array
                 items:
-                  $ref: "#/definitions/GTKYAnswer"
+                  $ref: '#/definitions/GTKYAnswer'
               wooliesFitTest:
-                $ref: "#/definitions/WooliesFitResult"
-
-  
+                $ref: '#/definitions/WooliesFitResult'
+                
+                
   /hm/getCandidateExperience:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the work experience for the candidate"
+        - hiringmanager
+      summary: Retrieves the work experience for the candidate
       operationId: getCandidateExperience
       parameters:
       - name: candidateId
@@ -846,6 +1193,11 @@ paths:
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
       produces:
         - application/json
       responses:
@@ -864,19 +1216,25 @@ paths:
               cvAttachmentId:
                 type: string
               outsideWorkExperience:
-                $ref: "#/definitions/OutsideWorkExperience"
-
+                $ref: '#/definitions/OutsideWorkExperience'
+                
+                
   /hm/getCandidateDetails:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the details to a candidate"
+        - hiringmanager
+      summary: Retrieves the details to a candidate
       operationId: getCandidateDetails
       parameters:
       - name: candidateId
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
       produces:
         - application/json
       responses:
@@ -887,21 +1245,27 @@ paths:
             type: object
             properties:
               candidateSummary:
-                $ref: "#/definitions/CandidateSummaryBody"
+                $ref: '#/definitions/CandidateSummaryBody'
               recentActivity:
-                $ref: "#/definitions/CandidateActivityList"
-
+                $ref: '#/definitions/CandidateActivityList'
+                
+                
   /hm/getJobInfoToApplication:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the Job information to an application"
+        - hiringmanager
+      summary: Retrieves the Job information to an application
       operationId: getJobInformation
       parameters:
       - name: applicationId
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
       produces:
         - application/json
       responses:
@@ -917,78 +1281,97 @@ paths:
                 type: string
               store:
                 type: string
-  
+                
+                
   /hm/fileDownloadList:
     get:
       tags:
-      - "hiringmanager"
+        - hiringmanager
       summary: List of items that can be downloaded
-      operationId: getFileDownloadList
+      operationId: getFileDownloadList_non_functional
       parameters:
       - name: candidateId
         in: query
         required: true
         type: string
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/FilesToDownloadList"
-            
-  /hm/upsertInterviewFeedBack:
-    post:
-      tags:
-      - "hiringmanager"
-      summary: Updates the Interview details and suitablity
-      operationId: interviewFeedBack
-      produces:
-      - "application/json"
-      parameters:
-      - name: "candidateId"
-        in: "query"
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
         required: true
-        type: string
-      - name: interviewDetails
-        in: body
-        required: true
-        schema:
-            $ref: '#/definitions/InterviewDetails'
-      responses:
-        200:
-          description: "successful operation"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Update of Interview FeedBack failed"
-          schema: 
-            $ref: "#/definitions/ResponseData"
-  
-  /hm/getOpenReqs:
-    get:
-      tags:
-      - "hiringmanager"
-      summary: "Retrieves the Job requisitions"
-      operationId: getOpenReqs
-      parameters:
-      - name: hiringmanagerId
-        in: query
-        required: true
-        type: string
+        type: string                   
       produces:
         - application/json
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: "#/definitions/OpenRequisitionList"
-                
+            $ref: '#/definitions/FilesToDownloadList'
+            
+            
+  /hm/upsertInterviewFeedBack:
+    post:
+      tags:
+        - hiringmanager
+      summary: Updates the Interview details and suitablity
+      operationId: interviewFeedBack
+      produces:
+        - application/json
+      parameters:
+        - name: candidateId
+          in: query
+          required: true
+          type: string
+        - name: interviewDetails
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InterviewDetails'
+        - in: "query"
+          name: "brand"
+          description: "Name of the Brand"
+          required: true
+          type: string                       
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Update of Interview FeedBack failed
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
+  /hm/getOpenReqs:
+    get:
+      tags:
+        - hiringmanager
+      summary: Retrieves the Job requisitions
+      operationId: getOpenReqs
+      parameters:
+      - name: hiringmanagerId
+        in: query
+        required: true
+        type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/OpenRequisitionList'
+            
+            
   /hm/forwardCandidateToReq:
     post:
       tags:
-      - "hiringmanager"
-      summary: "Forwardds a candidate to a requisition"
+        - hiringmanager
+      summary: Forwardds a candidate to a requisition
       operationId: forwardCandidateToReq
       parameters:
       - name: candidateId
@@ -999,25 +1382,31 @@ paths:
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
       produces:
         - application/json
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: "#/definitions/ResponseData"
-      
+            $ref: '#/definitions/ResponseData'
+            
+            
   /hm/getNameFromUser:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the username for the logged in Hiring Manager"
+        - hiringmanager
+      summary: Retrieves the username for the logged in Hiring Manager
       operationId: getNameFromUser
       parameters:
-      - name: hiringmanagerId
-        in: query
-        required: true
-        type: string
+        - name: hiringmanagerId
+          in: query
+          required: true
+          type: string
       produces:
         - application/json
       responses:
@@ -1035,18 +1424,28 @@ paths:
                 type: string
               userName:
                 type: string
+              division:
+                type: string
+              brand:
+                type: string
+                
                 
   /hm/getAssessmentHeader:
     get:
       tags:
-      - "hiringmanager"
-      summary: "Retrieves the Getting to Know You details for a Candidate"
+        - hiringmanager
+      summary: Retrieves the Getting to Know You details for a Candidate
       operationId: getAssessmentHeader
       parameters:
       - name: candidateId
         in: query
         required: true
         type: string
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
       produces:
         - application/json
       responses:
@@ -1065,7 +1464,7 @@ paths:
                   gtkyScore:
                     type: string
                   gtkyBenchmark:
-                    $ref: "#/definitions/PicklistOption"
+                    $ref: '#/definitions/PicklistOption'
                   gtkyDate:
                     type: string
               wooliesFit:
@@ -1078,16 +1477,19 @@ paths:
                     type: string
                   wooliesFitDate:
                     type: string
-
+                    
+                    
   /hm/upsertCandidate:
     post:
       tags:
-      - "hiringmanager"
-      summary: "Create or updates candidate"
-      description: "Creates a candidate if no candidate id is provided. Update the candidate if candidate id is provided in query string."
-      operationId: "upsertCandidateHM"
+        - hiringmanager
+      summary: Create or updates candidate
+      description: >-
+        Creates a candidate if no candidate id is provided. Update the candidate
+        if candidate id is provided in query string.
+      operationId: upsertCandidateHM
       produces:
-      - "application/json"
+        - application/json
       parameters:
       - in: "body"
         name: "candidateData"
@@ -1099,43 +1501,44 @@ paths:
         in: "query"
         description: "Field name eg candidate Id"
         required: true
-        type: string      
+        type: string     
+      - in: "query"
+        name: "brand"
+        description: "Name of the Brand"
+        required: true
+        type: string                   
       responses:
-        200:
-          description: "successful operation"
-          schema:  
-            $ref: "#/definitions/ResponseData"
-        400:
-          description: "Invalid email supplied"
-        404:
-          description: "Candidate not found"    
-
-  
-
-#######################################################################################################
-#######################################################################################################
-############################################ Monitoring ##############################################
-#######################################################################################################
-#######################################################################################################
-  
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+        '400':
+          description: Invalid email supplied
+        '404':
+          description: Candidate not found
+          
+          
   /monitoring/servicePerformance:
     get:
       tags:
-      - "monitoring"
-      summary: "Retrieves statistics on the service performance"
-      description: ""
-      operationId: "getServicePerformance"
+        - monitoring
+      summary: Retrieves statistics on the service performance
+      description: ''
+      operationId: getServicePerformance
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - in: "query"
-        name: "numberPeriods"
-        description: "indicates the number of periods that should be retrieved. Default is 24, the remaining periods will be printed to the log and removed from the statistic memory"
-        required: false 
-        type: string
+        - in: query
+          name: numberPeriods
+          description: >-
+            indicates the number of periods that should be retrieved. Default is
+            24, the remaining periods will be printed to the log and removed
+            from the statistic memory
+          required: false
+          type: string
       responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: successful operation
           schema:
             title: performanceStatistics
             type: object
@@ -1143,27 +1546,27 @@ paths:
               servicePerformance:
                 type: array
                 items:
-                  $ref: "#/definitions/PerformanceStatisticResult"
-
-
+                  $ref: '#/definitions/PerformanceStatisticResult'
+                  
+                  
   /monitoring/serviceAvailability:
     get:
       tags:
-      - "monitoring"
-      summary: "Retrieves statistics around the availability of the services"
-      description: ""
-      operationId: "getServiceAvailability"
+        - monitoring
+      summary: Retrieves statistics around the availability of the services
+      description: ''
+      operationId: getServiceAvailability
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - in: "query"
-        name: "fromDate"
-        description: "indicates the date from which the statistics should be pulled"
-        required: false 
-        type: string
+        - in: query
+          name: fromDate
+          description: indicates the date from which the statistics should be pulled
+          required: false
+          type: string
       responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: successful operation
           schema:
             title: availabilityStatistics
             type: object
@@ -1171,46 +1574,75 @@ paths:
               serviceAvailability:
                 type: array
                 items:
-                  $ref: "#/definitions/AvailabilityStatistic"
-
+                  $ref: '#/definitions/AvailabilityStatistic'
+                  
+                  
   /monitoring/sendTestEmail:
     get:
       tags:
-      - "monitoring"
-      summary: "Sends a test email to the defined address on the destination smfc_api_messaging_noauth"
-      description: ""
-      operationId: "sendTestErrorEmail"
+        - monitoring
+      summary: >-
+        Sends a test email to the defined address on the destination
+        smfc_api_messaging_noauth
+      description: ''
+      operationId: sendTestErrorEmail
       produces:
-      - "application/json"
+        - application/json
       responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: successful operation
           schema:
-            $ref: "#/definitions/ResponseData"
-      
+            $ref: '#/definitions/ResponseData'
+            
+            
   /monitoring/refreshPerformanceCache:
     get:
       tags:
-      - "monitoring"
-      summary: "Refreshes the cache used to store performance results. This resets the values previously collected"
-      description: ""
-      operationId: "refreshPerformanceCache"
+        - monitoring
+      summary: >-
+        Refreshes the cache used to store performance results. This resets the
+        values previously collected
+      description: ''
+      operationId: refreshPerformanceCache
       produces:
-      - "application/json"
+        - application/json
       responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: successful operation
           schema:
-            $ref: "#/definitions/ResponseData"
-      
-      
-          
-#######################################################################################################
-#######################################################################################################
-############################################ Definitions ##############################################
-#######################################################################################################
-#######################################################################################################
-
+            $ref: '#/definitions/ResponseData'
+            
+            
+  /monitoring/startMonitoring:
+    get:
+      tags:
+        - monitoring
+      summary: Starts the monitoring thread to check regularly for system availability
+      description: ''
+      operationId: startMonitoring
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
+            
+            
+  /monitoring/stopMonitoring:
+    get:
+      tags:
+        - monitoring
+      summary: Stops the monitoring thread that was started previously
+      description: ''
+      operationId: stopMonitoring
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ResponseData'
 definitions:
   PerformanceStatistic:
     type: object
@@ -1237,18 +1669,15 @@ definitions:
         type: integer
       failedCalls:
         type: integer
-
   PerformanceStatisticResult:
     type: object
     properties:
-      service: 
+      service:
         type: string
-      statistics: 
+      statistics:
         type: array
         items:
-          $ref: "#/definitions/PerformanceStatistic"
-          
-          
+          $ref: '#/definitions/PerformanceStatistic'
   AvailabilityStatistic:
     type: object
     properties:
@@ -1259,50 +1688,56 @@ definitions:
       timestamp:
         type: string
         format: date-time
-
-
   ResponseData:
-    type: "object"
+    type: object
     properties:
       candidateId:
-        type: "string"
+        type: string
       editStatus:
-        type: "string"
+        type: string
       status:
-        type: "string"
+        type: string
       message:
-        type: "string"  
+        type: string
     xml:
-      name: "User"    
-      
+      name: User
   UploadResume:
-    type: "object"
+    type: object
     properties:
       attachmentId:
-        type: "string"
+        type: string
       editStatus:
-        type: "string"
+        type: string
       status:
-        type: "string"
+        type: string
       message:
-        type: "string"    
-      
+        type: string
   UpsertCandidate:
-    type: "string"
+    type: string
     properties:
       candidateData:
-        type: "string"
+        type: string
     xml:
       name: "User"            
- 
-  Picklist:
+
+  BrandList:
     type: "object"
+    properties:
+      brands:
+        type: array
+        items:
+          type: string 
+
+  
+  Picklist:
+    type: object
     properties:
       PickListValues:
         type: array
         items:
           $ref: '#/definitions/PicklistOption'
-  
+          
+          
   PicklistOption:
     type: object
     properties:
@@ -1314,8 +1749,9 @@ definitions:
         type: string
       externalCode:
         type: string
-      locale: 
+      locale:
         type: string
+        
         
   PicklistOptionWithBGElement:
     type: object
@@ -1330,21 +1766,22 @@ definitions:
         type: string
       externalCode:
         type: string
-      locale: 
-        type: string      
-
+      locale:
+        type: string
+        
+        
   CandidateSummaryBody:
     type: object
     properties:
       candidateId:
         type: string
-      firstName: 
+      firstName:
         type: string
       lastName:
         type: string
-      preferredName: 
+      preferredName:
         type: string
-      address: 
+      address:
         type: string
       address2:
         type: string
@@ -1356,11 +1793,18 @@ definitions:
         type: string
       candInterest:
         type: string
+      candInterestBWS1:
+        type: string
+      candInterestBWS2:
+        type: string    
       candidateInterest:
         description: "Is the candidate still interested in further roles?"
         $ref: "#/definitions/PicklistOption"
+      candidateInterestBWS:
+        description: "Is the candidate still interested in further roles?"
+        $ref: "#/definitions/PicklistOption"  
       phoneCountryCode1:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       candGoals:
         type: string
       city:
@@ -1379,80 +1823,97 @@ definitions:
         type: string
       profileFileName:
         type: string
+      offenseResponseYes:
+        type: string  
       state:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       workRight:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       phoneCountryCodeAlt:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       race:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       title:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       criminalConviction:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       candAvailability:
-        $ref: "#/definitions/CandAvailability"
+        $ref: '#/definitions/CandAvailability'
       preferredRoles:
-        $ref: "#/definitions/PreferredRolesWithBGElement"
+        $ref: '#/definitions/PreferredRolesWithBGElement'
       stores:
-        $ref: "#/definitions/PreferredStores"
+        $ref: '#/definitions/PreferredStores'
       outsideWorkExperience:
-        $ref: "#/definitions/OutsideWorkExperience"
+        $ref: '#/definitions/OutsideWorkExperience'
       previousEmployee:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       disability:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       gender:
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       sendEmail:
         $ref: "#/definitions/PicklistOption"
-      
+      sendEmailBWS:
+        $ref: "#/definitions/PicklistOption" 
+      offenseResponse:   
+        $ref: "#/definitions/PicklistOption"
+      over18:  
+        $ref: "#/definitions/PicklistOption"
+
 
   CandidateHeader:
     type: object
     properties:
       candidateId:
         type: string
-      firstName: 
+      firstName:
         type: string
       lastName:
         type: string
-      preferredName: 
+      preferredName:
         type: string
       fullName:
         type: string
-  
+        
         
   CandAvailability:
     type: array
     title: results
     items:
-      $ref: "#/definitions/CandAvailabiltiyItem"
-  
-  
+      $ref: '#/definitions/CandAvailabiltiyItem'
+      
+      
   CandAvailabiltiyItem:
     type: object
     properties:
-      weekDay: 
-        $ref: "#/definitions/PicklistOptionWithBGElement"
+      weekDay:
+        $ref: '#/definitions/PicklistOptionWithBGElement'
       times:
         type: array
         title: times
         items:
-          $ref: "#/definitions/PicklistOptionWithBGElement"  
-        
+          $ref: '#/definitions/PicklistOptionWithBGElement'
+          
+          
   PreferredRolesWithBGElement:
     type: array
     title: results
     items:
-      $ref: "#/definitions/PicklistOptionWithBGElement"    
-                
+      $ref: '#/definitions/PicklistOptionWithBGElement'
+      
+      
   PreferredStores:
     type: array
     title: results
     items:
       $ref: "#/definitions/PreferredStoresItem"
+      
+      
+  StorelocatorBWS:
+    type: array
+    title: results
+    items:
+      $ref: "#/definitions/PreferredBWSStoresItem"      
     
   PreferredStoresItem:
     type: object
@@ -1471,13 +1932,37 @@ definitions:
         type: string
       name:
         type: string
- 
+
+        
+        
+  PreferredBWSStoresItem:
+    type: object
+    properties:
+      backgroundElementId:
+        type: string
+      stateBWS:
+        type: string
+      suburbBWS:
+        type: string
+      number:
+        type: string
+      storeBWS:
+        type: string
+      postcode:
+        type: string
+      name:
+        type: string      
+
+
   AttachmentInputData:
     type: object
     properties:
       attachmentId:
         type: string
-   
+      documentType:
+        type: string
+        
+        
   OutsideWorkExperienceItem:
     type: object
     properties:
@@ -1491,44 +1976,52 @@ definitions:
         type: string
       startDate:
         type: string
-#        format: date
       endDate:
         type: string
 #        format: date
+      industry:
+        $ref: "#/definitions/PicklistOption"
         
+
   OutsideWorkExperience:
     type: array
     title: results
     items:
-      $ref: "#/definitions/OutsideWorkExperienceItem"
-  
+      $ref: '#/definitions/OutsideWorkExperienceItem'
+      
+      
   OpenRequisitionList:
     type: array
     items:
-      $ref: "#/definitions/OpenRequisition"
-  
+      $ref: '#/definitions/OpenRequisition'
+      
+      
   OpenRequisition:
     type: object
     properties:
       requisitionId:
         type: string
-      jobTitle: 
+      jobTitle:
         type: string
       status:
         type: string
+      division:
+        type: string
       
+
   CandidateAgendaList:
     type: array
     items:
-      $ref: "#/definitions/CandidateAgenda"
-
+      $ref: '#/definitions/CandidateAgenda'
+      
+      
   CandidateAgenda:
     type: object
     properties:
       roleName:
-        description: "to be read from the External Title of the Job Requisition"
+        description: to be read from the External Title of the Job Requisition
         type: string
-      startDate: 
+      startDate:
         type: string
       interviewer:
         type: string
@@ -1537,15 +2030,16 @@ definitions:
       status:
         type: string
       notes:
-        description: "to be used for indicating the store location"
+        description: to be used for indicating the store location
         type: string
       locationAddress:
         type: string
-
+        
+        
   ApplicationDetails:
     type: object
     properties:
-      applicationId: 
+      applicationId:
         type: string
       requisitionId:
         type: string
@@ -1553,7 +2047,7 @@ definitions:
         type: string
       jobDescription:
         type: string
-      hiringManager: 
+      hiringManager:
         type: string
       location:
         type: string
@@ -1561,79 +2055,101 @@ definitions:
         type: string
       status:
         type: string
-  
+        
+        
   FilesToDownloadList:
     type: array
     items:
-      $ref: "#/definitions/FileToDownloadItems"
-
+      $ref: '#/definitions/FileToDownloadItems'
+      
+      
   FileToDownloadItems:
     type: object
     properties:
       attachmentId:
         type: string
-      attachmentName: 
+      attachmentDescription:
+        type: string
+      documentType:
+        type: string
+      fileName:
         type: string
       module:
-        description: "Either jobsApplied or supportingDoc1 or supportingDoc2"
+        description: Either jobsApplied or supportingDoc1 or supportingDoc2
         type: string
-      
+        
+        
   CandidateNotInterestedInput:
     type: object
     properties:
-      requisitionId: 
+      requisitionId:
         type: string
-      notInterestedReason:
-        description: "Only needs to be specified in case the Candidate is rejecting"
-        $ref: "#/definitions/PicklistOption"
+      declinedRole:
+        description: Only needs to be specified in case the Candidate is rejecting
+        $ref: '#/definitions/PicklistOption'
       sendEmail:
-        description: "Sends email if candidate needs email communication on opening"
-        $ref: "#/definitions/PicklistOption" 
+        description: Sends email if candidate needs email communication on opening
+        $ref: '#/definitions/PicklistOption'
       candidateInterest:
-        description: "Indicates if candidate is still interested in a role at Woolworth"
-        $ref: "#/definitions/PicklistOption" 
-      notInterestedComment:
-        description: "Optional field for comments by the candidate"
+        description: Indicates if candidate is still interested in a role at Woolworth
+        $ref: '#/definitions/PicklistOption'
+      declinedRoleComments:
+        description: Optional field for comments by the candidate
         type: string
       interestedInFurtherRoles:
-        description: "Set if the Candidate is still interested in Roles"
+        description: Set if the Candidate is still interested in Roles
         type: boolean
-  
+      sendEmailBWS:
+        description: Sends email if candidate needs email communication on opening
+        $ref: '#/definitions/PicklistOption'
+      candidateInterestBWS:
+        description: Indicates if candidate is still interested in a role at Woolworth
+        $ref: '#/definitions/PicklistOption'  
+        
   OfferNotAcceptedInput:
     type: object
     properties:
-      applicationId: 
+      applicationId:
         type: string
-      notInterestedReason:
-        description: "Only needs to be specified in case the Candidate is rejecting. This only requires the picklistOptionId"
-        $ref: "#/definitions/PicklistOption"
+      declinedRole:
+        description: >-
+          Only needs to be specified in case the Candidate is rejecting. This
+          only requires the picklistOptionId
+        $ref: '#/definitions/PicklistOption'
       sendEmail:
-        description: "Sends email if candidate needs email communication on opening"
-        $ref: "#/definitions/PicklistOption" 
-      notInterestedComment:
-        description: "Optional field for comments by the candidate"
+        description: Sends email if candidate needs email communication on opening
+        $ref: '#/definitions/PicklistOption'
+      declinedRoleComments:
+        description: Optional field for comments by the candidate
         type: string
       candidateInterest:
-        description: "Indicates if candidate is still interested in a role at Woolworth"
-        $ref: "#/definitions/PicklistOption" 
+        description: Indicates if candidate is still interested in a role at Woolworth
+        $ref: '#/definitions/PicklistOption'
       interestedInFurtherRoles:
-        description: "Set if the Candidate is still interested in Roles"
+        description: Set if the Candidate is still interested in Roles
         type: boolean
-  
+      sendEmailBWS:
+        description: Sends email if candidate needs email communication on opening
+        $ref: '#/definitions/PicklistOption'
+      candidateInterestBWS:
+        description: Indicates if candidate is still interested in a role at Woolworth
+        $ref: '#/definitions/PicklistOption'  
+        
   OfferAcceptedInput:
     type: object
     properties:
-      applicationId: 
+      applicationId:
         type: string
       dateOfBirth:
         type: string
       gender:
         description: this only requires the picklistOptionId
-        $ref: "#/definitions/PicklistOption"
+        $ref: '#/definitions/PicklistOption'
       disability:
         description: this only requires the picklistOptionId
-        $ref: "#/definitions/PicklistOption"
-  
+        $ref: '#/definitions/PicklistOption'
+        
+        
   CandidatePassword:
     type: object
     properties:
@@ -1641,18 +2157,21 @@ definitions:
         type: string
         format: password
         
+        
   HFATestDetails:
     type: object
     properties:
-      hfaLink: 
+      hfaLink:
         type: string
+        
         
   HFAUpdateInput:
     type: object
     properties:
       comment:
         type: string
-
+        
+        
   CandidateSearchResult:
     type: object
     properties:
@@ -1675,6 +2194,7 @@ definitions:
       gtkyStatus:
         type: string
         
+        
   CandidateSearchResultList:
     type: object
     properties:
@@ -1685,6 +2205,7 @@ definitions:
         items:
           $ref: '#/definitions/CandidateSearchResult'
           
+          
   CandidateSearchInput:
     type: object
     properties:
@@ -1693,8 +2214,8 @@ definitions:
       searchInput:
         type: array
         items:
-          $ref: "#/definitions/KeyValue"
-
+          $ref: '#/definitions/KeyValue'
+          
   KeyValue:
     type: object
     properties:
@@ -1703,23 +2224,24 @@ definitions:
       value:
         type: string
         
-  
+        
   GTKYAnswer:
     type: object
     properties:
       questionId:
         type: string
-      questionText: 
+      questionText:
         type: string
-      answerId: 
-        $ref: "#/definitions/PicklistOption"
-      answerWeight: 
+      answerId:
+        $ref: '#/definitions/PicklistOption'
+      answerWeight:
         type: string
-  
+        
+        
   WooliesFitMeasure:
     type: object
     properties:
-      band: 
+      band:
         type: string
       score:
         type: string
@@ -1728,6 +2250,7 @@ definitions:
       measureText:
         type: string
         
+        
   WooliesFitResult:
     type: object
     properties:
@@ -1735,21 +2258,22 @@ definitions:
         type: string
       orderId:
         type: string
-      overallBenchmark: 
+      overallBenchmark:
         type: string
       overallScore:
         type: string
       measures:
         type: array
         items:
-          $ref: "#/definitions/WooliesFitMeasure"
-      
+          $ref: '#/definitions/WooliesFitMeasure'
+          
+          
   CandidateActivity:
     type: object
     properties:
-      date: 
+      date:
         type: string
-      jobTitle: 
+      jobTitle:
         type: string
       location:
         type: string
@@ -1759,26 +2283,27 @@ definitions:
         type: string
       wasConsidered:
         type: boolean
-  
+        
+        
   Email:
     type: object
     properties:
-      SubscriberKey: 
+      SubscriberKey:
         type: string
-      Address: 
+      Address:
         type: string
       FirstName:
         type: string
       LastName:
         type: string
       Body:
-        type: string  
-      
+        type: string
+        
+        
   CandidateActivityList:
     type: array
     items:
-      $ref: "#/definitions/CandidateActivity"
-  
+      $ref: '#/definitions/CandidateActivity'
   InterviewDetails:
     type: object
     properties:
@@ -1796,20 +2321,179 @@ definitions:
         type: string
       requisitiontitle:
         type: string
-  
+        
+        
   CandidateData:
     type: object
     properties:
       candidateId:
         type: string
-      firstName: 
+      firstName:
         type: string
       lastName:
         type: string
       cellPhone:
         type: string
+      contactEmail:
+        type: string
+        
+        
+  UpsertWorkEntitlement:
+    type: string
+    properties:
+      candidateData:
+        type: string
+        
+        
+  WorkEntitlementResponse:
+    type: object
+    properties:
+      applicationId:
+        type: string
+      editStatus:
+        type: string
+      status:
+        type: string
+      message:
+        type: string
+        
+        
+  JobApplicationSummaryBody:
+    type: object
+    properties:
+      applicationId:
+        type: string
+      visaIssueDate:
+        type: string
+      visaExpiryDate:
+        type: string
+      applicationTemplateId:
+        type: string
+      passportNumber:
+        type: string
+      visaNumber:
+        type: string
+      rtwType:
+        type: string
+      shirtSize:
+        type: string
+      garmentType:
+        type: string
+      visaType:
+        type: string
+      workEntitlement:
+        type: string
+      countryCitizenship:
+        type: string
+      bkgrndChkStatus:
+        type: string
+      acceptOffer:
+        type: string
+      preferredName:
+        type: string
+      badgeName:
+        type: string
+      firstName:
+        type: string
   
-      
+  
+  QuizList:
+    type: array
+    items:
+      $ref: "#/definitions/QuizData"
+     
+        
+  QuizData:
+    type: object
+    properties:
+      questionPickListId:
+        type: string
+      questionText: 
+        type: string
+        
+        
+  WeightList:
+    type: array
+    items:
+      $ref: "#/definitions/WeightData"
+        
+  WeightData:
+    type: object
+    properties:
+      answerPickListOptionId:
+        type: string
+      answerWeight: 
+        type: string      
+
+  GTKYItemList:
+    type: array
+    items:
+      $ref: "#/definitions/GTKYItem"
+        
+  GTKYItem:
+    type: object
+    properties:
+      picklistId:
+        type: string
+      answer: 
+        type: string 
+      optionId: 
+        type: string     
+  
+  
+  AuthKeysData:
+    type: object
+    properties:
+      apiKey:
+        type: string
+      apiSecret: 
+        type: string 
+      clientKey: 
+        type: string   
+      sfmcApiKey:
+        type: string
+      sfmcApiSecret:
+        type: string
+        
+        
+  QuizMetaData:
+    type: object
+    properties:
+      brand:
+        type: string
+      numberOfQuestions:
+        type: string
+      totalWeightOfQuiz:  
+        type: string
+      overAllScore: 
+        type: string 
+      benchMark: 
+        type: string
+      meetsBenchmark:                         
+        type: string
+      doesNotMeetsBenchmark:  
+        type: string
+      quizStatusCompleted:
+        type: string
+      quizStatusPartiallyCompleted:  
+        type: string
+        
+  DispositionConstantsList:
+    type: array
+    items:
+      $ref: "#/definitions/DispositionConstants"      
+        
+  DispositionConstants:
+    type: object
+    properties:
+      brand:
+        type: string
+      key: 
+        type: string 
+      value: 
+        type: string         
+        
+
 externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
