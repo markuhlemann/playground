@@ -189,8 +189,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            title: candidateExists
-            type: boolean
+            $ref: '#/definitions/EmailExists'
         '400':
           description: Invalid email supplied
         '404':
@@ -2191,9 +2190,10 @@ definitions:
         type: string
       phone:
         type: string
-      gtkyStatus:
+      quizStatus:
         type: string
-        
+      quizType:
+        type: string  
         
   CandidateSearchResultList:
     type: object
@@ -2492,7 +2492,14 @@ definitions:
         type: string 
       value: 
         type: string         
-        
+  
+  EmailExists:
+    type: object
+    properties:
+      primaryEmail:
+        type: boolean
+      contactEmail: 
+        type: boolean
 
 externalDocs:
   description: Find out more about Swagger
