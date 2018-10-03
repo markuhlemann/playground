@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.0.33"
+  version: "1.5.01"
   title: "Performance Evaluation by Woolies"
 host: "my.wowcareers.com.au"
 basePath: "/"
@@ -45,8 +45,14 @@ paths:
       responses:
         200:
           description: "successful operation"
-          schema:  
-            $ref: "#/definitions/UserData" 
+          schema:
+            type: object
+            title: userDetailsResponse
+            properties: 
+             UserData:
+              $ref: "#/definitions/UserData"
+             responseData:
+              $ref: "#/definitions/ResponseData"
         417:
           description: "Critical User details couldn't be read that are a prerequisite for further operations"
 
@@ -176,7 +182,175 @@ paths:
             type: array
             items:
               $ref: "#/definitions/ResponseData"
+              
+  /employee/cascadeParentGoalExist:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Team Members for a Team Leader, including the parentGoalId for already cascaded Goal"
+      operationId: cascadeParentGoalExist
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: true
+        type: string
+      - name: "parentGoal"
+        in: "query"
+        description: "the parentGoal Id for which Goal is already cascaded"
+        required: true
+        type: string  
+      - name: "checkIsMemberTeamLead"
+        in: "query"
+        description: "If the parameter is present and true, checks whether the team member is also a team lead"
+        required: false
+        type: boolean
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: cascadeTeamMembers
+            properties:
+              cascadeTeamMembers:
+                type: array
+                items:
+                  $ref: "#/definitions/ParentGoalDetails"
+              responseData:
+                $ref: "#/definitions/ResponseData"     
+                
+  /employee/getTeamMembers:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Team Members for a Team Member, including the stage of the Goal Setting Process"
+      operationId: getTeamMembers
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the operation"
+        required: true
+        type: string
+      - name: "readGoalStage"
+        in: "query"
+        description: "If the parameter is present and true, the Goal Stage should be read"
+        required: false
+        type: boolean
+      - name: "checkIsMemberTeamLead"
+        in: "query"
+        description: "If the parameter is present and true, checks whether the team member is also a team lead"
+        required: false
+        type: boolean
+      - name: "teamMember"
+        in: "query"
+        description: "team Member Id for which to execute the operation"
+        required: true
+        type: string  
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: teamMembers
+            properties:
+              teamMembers:
+                type: array
+                items:
+                  $ref: "#/definitions/TeamMemberDetails"
+              responseData:
+                $ref: "#/definitions/ResponseData"
+             
+  /employee/getTeamStatistics:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Performance Statistics for the Team"
+      operationId: getTeamStatistics
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the operation"
+        required: true
+        type: string
+      - name: "teamLeader"
+        in: "query"
+        description: "The team leader for whom team statistics are to be fetched"
+        required: false
+        type: string 
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: object
+            title: teamStatsResponse
+            properties: 
+             teamStatsData:
+              $ref: "#/definitions/TeamStats"
+             responseData:
+              $ref: "#/definitions/ResponseData"
 
+  /employee/getExtendedTeamStatistics:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Performance Statistics for the Extended Team(Direct and Indirect reportees)"
+      operationId: getExtendedTeamStatistics
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the operation"
+        required: true
+        type: string
+      - name: "teamLeader"
+        in: "query"
+        description: "The team leader for whom team statistics are to be fetched"
+        required: false
+        type: string 
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: object
+            title: extendedTeamStats
+            properties: 
+             extendedTeamStatsData:
+              $ref: "#/definitions/TeamStats"
+             responseData:
+              $ref: "#/definitions/ResponseData"
+                    
+  /employee/checkLoggedInUser:
+    get:
+      tags:
+      - "employee"
+      summary: "Checks if userName passed is the same as the logged in user"
+      operationId: checkLoggedInUser
+      parameters:
+      - name: "userName"
+        in: "query"
+        description: "The userName to be checked with the logged In User"
+        required: true
+        type: string 
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: boolean
+            title: loggedInUserStatus
+            properties: 
+             loggedInUser:
+              type: boolean
+             responseData:
+              $ref: "#/definitions/ResponseData"       
 
 #######################################################################################################
 #######################################################################################################
@@ -196,7 +370,7 @@ paths:
       responses:
         200:
           description: "successful operation"
-          schema:  
+          schema:
             $ref: "#/definitions/GoalPlanTemplateIdResponse"
 
   /goals/getGoalPlanTemplates:
@@ -222,6 +396,27 @@ paths:
                   $ref: "#/definitions/GoalPlanTemplate"
               responseData:
                 $ref: "#/definitions/ResponseData"
+                
+  /goals/getGoalPlanTemplateDetails:
+    get:
+      tags:
+      - "goals"
+      summary: "Retrieves the details of the Goal Plan Template Id provided."
+      operationId: getGoalPlanTemplateDetails
+      parameters:
+      - name: "goalTemplateId"
+        in: "query"
+        description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template "
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/GoalPlanTemplateDetailsResponse"
+                   
 
   /goals/getGoalTemplatePicklists:
     get:
@@ -302,6 +497,16 @@ paths:
       - name: "goalTemplateId"
         in: "query"
         description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template"
+        required: false
+        type: string
+      - name: "firstName"
+        in: "query"
+        description: "the first name of the user"
+        required: false
+        type: string
+      - name: "lastName"
+        in: "query"
+        description: "the last name of the user"
         required: false
         type: string
       - name: "key"
@@ -468,6 +673,8 @@ paths:
                 type: string
               onboardingWizardState:
                 type: string
+              developmentGoalPlanState:
+                type: string
               responseData:
                 $ref: "#/definitions/ResponseData"
         417:
@@ -576,6 +783,37 @@ paths:
           schema:
             $ref: "#/definitions/ResponseData"
 
+  /goals/measureCompletionUpdate:
+    post:
+      tags:
+      - "goals"
+      summary: "The operation measureCompletionUpdate is called when the logged in user is changing the measure completion indicator on the Goal."
+      operationId: measureCompletionUpdate
+      parameters:
+      - name: "goal"
+        in: "body"
+        description: "the Goal to update"
+        required: true
+        schema:
+          $ref: "#/definitions/Goal"
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
+
   /goals/deleteCustomGoal:
     delete:
       tags:
@@ -663,6 +901,11 @@ paths:
         description: "the username of the team member for whom goal is cascaded"
         required: true
         type: string
+      - name: "parentGoalId"
+        in: "query"
+        description: "the parentGoalId of the team member for whom goal is cascaded"
+        required: true
+        type: string  
       produces:
       - "application/json"
       responses:
@@ -803,7 +1046,7 @@ paths:
         description: "the Goal to update"
         required: true
         schema:
-          $ref: "#/definitions/GoalShort"
+          $ref: "#/definitions/Goal"
       - name: "goalPlanTemplateId"
         in: "query"
         description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
@@ -839,11 +1082,6 @@ paths:
         description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
         required: false
         type: string
-      - name: "feedback"
-        in: "query"
-        description: "the feedback to be added"
-        required: true
-        type: string
       produces:
       - "application/json"
       responses:
@@ -863,6 +1101,20 @@ paths:
 #############################################################################################
 #############################################################################################
 
+  /development/getDevelopmentGoalTemplateId:
+    get:
+      tags:
+      - "development"
+      summary: "Return the current Development Goal Plan Template ID of the logged in Employee"
+      operationId: getDevelopmentGoalTemplateId
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            $ref: "#/definitions/DevelopmentGoalPlanTemplateIdResponse"
+
   /development/getDevelopmentGoals:
     get:
       tags:
@@ -875,9 +1127,9 @@ paths:
         description: "the user for which to query the development plan goals"
         required: true
         type: string
-      - name: "goalPlanTemplateId"
+      - name: "devGoalPlanTemplateId"
         in: "query"
-        description: "the goal plan template Id for which to execute the preparation"
+        description: "the development goal plan template Id for which to execute the preparation"
         required: false
         type: string
       produces:
@@ -899,6 +1151,32 @@ paths:
                   $ref: "#/definitions/DevelopmentGoalStatus"
               responseData:
                 $ref: "#/definitions/ResponseData"
+                
+  /development/getExampleDevelopmentGoal:
+    get:
+      tags:
+      - "development"
+      summary: "Retrieves the example development goal"
+      operationId: getExampleDevelopmentGoal
+      parameters:
+      - name: "devGoalPlanTemplateId"
+        in: "query"
+        description: "the development goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+           type: object
+           title: exampleDevGoal
+           properties: 
+            developmentGoal:
+             $ref: "#/definitions/DevelopmentGoal"
+            responseData:
+                $ref: "#/definitions/ResponseData"
               
   /development/upsertDevelopmentGoals:
     post:
@@ -907,9 +1185,14 @@ paths:
       summary: "This operation upserts the development goals of the logged in user"
       operationId: upsertDevelopmentGoals
       parameters:
-      - name: "goalPlanTemplateId"
+      - name: "devGoalPlanTemplateId"
         in: "query"
-        description: "the goal plan template Id for which to execute the preparation"
+        description: "the development goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      - name: "notifier"
+        in: "query"
+        description: "passes the role adding or editing a dev goal comment"
         required: false
         type: string
       - name: "developmentGoal"
@@ -942,9 +1225,9 @@ paths:
         description: "the id of the Development Goal to delete"
         required: true
         type: string
-      - name: "goalPlanTemplateId"
+      - name: "devGoalPlanTemplateId"
         in: "query"
-        description: "the goal plan template Id for which to execute the preparation. Using the default value if not provided"
+        description: "the development goal plan template Id for which to execute the preparation. Using the default value if not provided"
         required: false
         type: string
       produces:
@@ -959,10 +1242,170 @@ paths:
           schema:
             $ref: "#/definitions/ResponseData"
             
-    
-  
-  
-  
+  /development/shareDevelopmentGoalsWithTeamLead:
+    post:
+      tags:
+      - "development"
+      summary: "This operation is used to share all development goals with the Team Lead and send the respective notifications"
+      operationId: shareDevelopmentGoalsWithTeamLead
+      parameters:
+      - name: "developmentGoals"
+        in: "body"
+        description: "the Development Goals to share"
+        required: true
+        schema:
+          $ref: "#/definitions/DevelopmentGoalList"
+      - name: "devGoalPlanTemplateId"
+        in: "query"
+        description: "the development goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"  
+            
+  /development/acknowledgeDevelopmentGoalsForTM:
+    post:
+      tags:
+      - "development"
+      summary: "This operation is used to acknowledge all development goals for the Team Member and send the respective notifications"
+      operationId: acknowledgeDevelopmentGoalsForTM
+      parameters:
+      - name: "developmentGoals"
+        in: "body"
+        description: "the Development Goals to acknowledge"
+        required: true
+        schema:
+          $ref: "#/definitions/DevelopmentGoalList"
+      - name: "devGoalPlanTemplateId"
+        in: "query"
+        description: "the development goal plan template Id for which to execute the preparation"
+        required: false
+        type: string
+      - name: "teamMember"
+        in: "query"
+        description: "the Team member for which development goals need to be acknowledged"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "operation successful"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"
+        500:
+          description: "error during update"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData" 
+              
+              
+#######################################################################################################
+#######################################################################################################
+############################################ Review Cycle   ##############################################
+#######################################################################################################
+#######################################################################################################
+
+  /review/getReviewCycleDetails:
+    get:
+      tags:
+      - "reviewCycle"
+      summary: "Retrieving details of review cycle"
+      operationId: getReviewCycleDetails
+      parameters:
+      - name: "brandId"
+        in: "query"
+        description: "the brand Id for which review cycle details are to be fetched"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+           type: object
+           title: reviewCycleDetailsObject
+           properties: 
+            reviewCycleDetails:
+             $ref: "#/definitions/reviewCycleDetail"
+            responseData:
+                $ref: "#/definitions/ResponseData"   
+
+              
+#######################################################################################################
+#######################################################################################################
+############################################ Documents   ##############################################
+#######################################################################################################
+#######################################################################################################
+
+  /doc/getDocument:
+    get:
+      tags:
+      - "document"
+      summary: "Retrieving a document from the document repository"
+      operationId: getDocument
+      parameters:
+      - name: "fileName"
+        in: "query"
+        description: "the name of the file to be retrieved"
+        required: true
+        type: string
+      produces:
+      - "application/pdf"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: string
+            format: binary    
+
+
+  /doc/getDocumentJson:
+    get:
+      tags:
+      - "document"
+      summary: "Retrieving a document from the document repository"
+      operationId: getDocumentJson
+      parameters:
+      - name: "fileName"
+        in: "query"
+        description: "the name of the file to be retrieved"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      - "application/pdf"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            title: documentResponse
+            type: object
+            properties:
+              fileName:
+                type: string
+              fileContent:
+                type: string
+                format: binary    
+              
+ 
 #######################################################################################################
 #######################################################################################################
 ############################################ Definitions ##############################################
@@ -1050,9 +1493,15 @@ definitions:
         type: string
       opsSupportCategoryId:
         type: string
+      TeamLeader:
+        type: string
+      TeamLeaderName:
+        type: string
       opsSupportCategory:
         description: "custom08-businessUnit of the user"
         type: string
+      defaultFullName:
+        type: string  
 
   MeasureOfSuccess:
     type: object
@@ -1065,9 +1514,20 @@ definitions:
         description: "Percent complete of the Goal"
         type: string
 
-  
-  AvailableTag:
+  TeamStats:
     type: object
+    properties:
+      goalsAgreedPerc:
+        type: string
+      devPlansActivePerc:
+        type: string
+      midYearReviewsCompletedPerc:
+        type: string
+      yearEndReviewsCompletedPerc:
+        type: string
+        
+  AvailableTag:
+    type: object 
     properties:
       fieldId: 
         type: string
@@ -1085,14 +1545,17 @@ definitions:
     properties:
       id:
         type: string
-        format: date
       commentator:
+        type: string
+      defaultFullName:
         type: string
       content:
         type: string
       lastModified:
         type: string
-        format: date
+      objId:
+        type: string  
+
 
   Goal:
     type: object
@@ -1150,15 +1613,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/AvailableTag"
-          
-  GoalShort:
-    type: object
-    properties:
-      id:
-        type: string
-      visibility:
-        type: boolean
-        description: "Updates permissions/privateAccess"
       
   Goals:
     type: object
@@ -1187,6 +1641,16 @@ definitions:
     properties:
       goalPlanTemplateId: 
         type: string
+        
+  GoalPlanTemplateDetailsResponse:
+    type: object
+    properties:
+      goalPlanTemplateName: 
+        type: string 
+      startDate: 
+        type: string
+      endDate: 
+        type: string   
   
   GoalPlanPicklistsResponse:
     type: object
@@ -1232,11 +1696,30 @@ definitions:
         type: string
       username:
         type: string
+      defaultFullName:
+        type: string
       isTeamLeader:
         type: string
         format: boolean
+      developmentGoalStage:
+        type: string
       goalSettingStage:
         type: string
+        
+  ParentGoalDetails:
+    type: object
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      username:
+        type: string
+      isTeamLeader:
+        type: string
+        format: boolean
+      parentGoalExist: 
+        type: boolean
   
   GoalPlanTemplate: 
     type: object
@@ -1247,7 +1730,13 @@ definitions:
         type: string
       picklists:
         $ref: "#/definitions/GoalPlanPicklists"
-        
+         
+  DevelopmentGoalPlanTemplateIdResponse:
+    type: object
+    properties:
+      developmentGoalPlanTemplateId: 
+        type: string
+               
   DevelopmentGoal:
     type: object
     properties:
@@ -1272,6 +1761,12 @@ definitions:
         type: string
       state:
         type: string
+      teamMemberComment:
+        type: string
+      teamLeaderComment:
+        type: string
+      customStatusInternal:
+        type: string
       type:
         type: string
       measure:
@@ -1288,10 +1783,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/DevelopmentGoal"
-      availableStatuses:
-        type: array
-        items:
-          $ref: "#/definitions/DevelopmentGoalStatus"
           
   DevelopmentGoalStatus:
     type: object
@@ -1299,6 +1790,34 @@ definitions:
       statusKey:
         type: string
       statusLabel:
+        type: string
+    
+  reviewCycleDetail:
+    type: object
+    properties:
+      isMidYearReview:
+        type: boolean
+      isMidYearLockin:
+        type: boolean
+      isMidYearRelease:
+        type: boolean
+      midYearDueDate:
+        type: string
+      midYearReleaseDate:
+        type: string        
+      midYearDueDateCounter:
+        type: string
+      isYearEndReview:
+        type: boolean
+      isYearEndLockin:
+        type: boolean
+      isYearEndRelease:
+        type: boolean
+      yearEndDueDate:
+        type: string
+      yearEndReleaseDate:
+        type: string        
+      yearEndDueDateCounter:
         type: string
         
 externalDocs:
