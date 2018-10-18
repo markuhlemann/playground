@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.5.01"
+  version: "1.5.06"
   title: "Performance Evaluation by Woolies"
-host: "my.wowcareers.com.au"
+host: "performancemanager10.successfactors.com"
 basePath: "/"
 tags:
 - name: "myplan"
@@ -19,6 +19,20 @@ paths:
       - "employee"
       summary: "Returns the version of the API layer"
       operationId: getVersion
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: string
+
+  /employee/logout:
+    post:
+      tags:
+      - "employee"
+      summary: "Logs the user out of the session"
+      operationId: logout
       produces:
       - "application/json"
       responses:
@@ -104,6 +118,11 @@ paths:
         description: "If the parameter is present and true, checks whether the team member is also a team lead"
         required: false
         type: boolean
+      - name: "performanceYear"
+        in: "query"
+        description: "performanceYear for which MY and YE status needs to be shown"
+        required: false
+        type: string
       produces:
       - "application/json"
       responses:
@@ -247,7 +266,7 @@ paths:
         in: "query"
         description: "team Member Id for which to execute the operation"
         required: true
-        type: string  
+        type: string 
       produces:
       - "application/json"
       responses:
@@ -264,12 +283,12 @@ paths:
               responseData:
                 $ref: "#/definitions/ResponseData"
              
-  /employee/getTeamStatistics:
+  /employee/getTeamGoalStatistics:
     get:
       tags:
       - "employee"
-      summary: "Retrieves the Performance Statistics for the Team"
-      operationId: getTeamStatistics
+      summary: "Retrieves the Goal Plan Statistics for the Team"
+      operationId: getTeamGoalStatistics
       parameters:
       - name: "goalPlanTemplateId"
         in: "query"
@@ -291,10 +310,83 @@ paths:
             title: teamStatsResponse
             properties: 
              teamStatsData:
-              $ref: "#/definitions/TeamStats"
+              $ref: "#/definitions/TeamGoalStats"
              responseData:
               $ref: "#/definitions/ResponseData"
 
+  /employee/getTeamMidYearStatistics:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Mid Year Statistics for the Team"
+      operationId: getTeamMidYearStatistics
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the operation"
+        required: true
+        type: string
+      - name: "performanceYear"
+        in: "query"
+        description: "the performance year for which stats are to be fetched"
+        required: true
+        type: string
+      - name: "teamLeader"
+        in: "query"
+        description: "The team leader for whom team statistics are to be fetched"
+        required: false
+        type: string 
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: object
+            title: teamMidYearStats
+            properties: 
+             midYearStatsData:
+              $ref: "#/definitions/MidYearTeamStats"
+             responseData:
+              $ref: "#/definitions/ResponseData"
+
+
+  /employee/getTeamYearEndStatistics:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Year End Performance Statistics for the Team"
+      operationId: getTeamYearEndStatistics
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the operation"
+        required: true
+        type: string
+      - name: "performanceYear"
+        in: "query"
+        description: "the performance year for which stats are to be fetched"
+        required: true
+        type: string
+      - name: "teamLeader"
+        in: "query"
+        description: "The team leader for whom team statistics are to be fetched"
+        required: false
+        type: string 
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: object
+            title: teamYearEndStats
+            properties: 
+             yearEndStatsData:
+              $ref: "#/definitions/YearEndTeamStats"
+             responseData:
+              $ref: "#/definitions/ResponseData"
+                            
   /employee/getExtendedTeamStatistics:
     get:
       tags:
@@ -351,6 +443,37 @@ paths:
               type: boolean
              responseData:
               $ref: "#/definitions/ResponseData"       
+
+
+  /employee/cache/values:
+    get:
+      tags:
+      - "employee"
+      summary: "retrieve cached values"
+      operationId: getCachedValues
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: object
+            title: cacheValues
+
+  /employee/cache/reset:
+    get:
+      tags:
+      - "employee"
+      summary: "reset the cache"
+      operationId: clearCache
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
 
 #######################################################################################################
 #######################################################################################################
@@ -528,6 +651,40 @@ paths:
               responseData:
                 $ref: "#/definitions/ResponseData"
     
+
+  /goals/showSplashPageGeneric:
+    get:
+      tags:
+      - "goals"
+      summary: "Checks whether to show a splash page for the user in the particular context. The context itself is a key that can be used by the administrator to use different splash pages at different stages in the application. The result is a generic result indicating which page to display"
+      operationId: showSplashPageGeneric
+      parameters:
+      - name: "goalTemplateId"
+        in: "query"
+        description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template"
+        required: false
+        type: string
+      - name: "key"
+        in: "query"
+        description: "The context in which the application is checking whether to display the splash page"
+        required: true
+        type: string      
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: splashPageGenericResponse
+            properties:
+              splashPageId:
+                type: string
+              splashPageVisibility:
+                type: boolean
+              responseData:
+                $ref: "#/definitions/ResponseData"
+    
   /goals/getUserContext:
     get:
       tags:
@@ -655,6 +812,11 @@ paths:
       summary: "Retrieves the state of the application, both for Wizard as well as for Goal Plan"
       operationId: getApplicationState
       parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: true
+        type: string
       - name: "userName"
         in: "query"
         description: "the user for which to query the state"
@@ -1318,20 +1480,272 @@ paths:
               
 #######################################################################################################
 #######################################################################################################
-############################################ Review Cycle   ##############################################
+############################################ Review ###################################################
 #######################################################################################################
 #######################################################################################################
 
   /review/getReviewCycleDetails:
     get:
       tags:
-      - "reviewCycle"
+      - "review"
       summary: "Retrieving details of review cycle"
       operationId: getReviewCycleDetails
       parameters:
-      - name: "brandId"
+      - name: "performanceYear"
         in: "query"
-        description: "the brand Id for which review cycle details are to be fetched"
+        description: "the performance year for which review cycle details are to be fetched"
+        required: true
+        type: string
+      - name: "teamMember"
+        in: "query"
+        description: "the team member for which review cycle details are to be fetched"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: reviewCycleDetailsObject
+            properties:
+              reviewCycleDetails:
+                type: array
+                items:
+                  $ref: "#/definitions/reviewCycleDetail"
+              reviewCycleDates:
+                $ref: "#/definitions/reviewCycleDates"
+              reviewCycleNotificationText:
+                type: object
+                properties:
+                  teamMemberNotification:
+                    type: string
+                  teamLeaderNotification:
+                    type: string
+              responseData:
+                $ref: "#/definitions/ResponseData"
+  
+  /review/getAllReviewCycles:
+    get:
+      tags:
+      - "review"
+      summary: "Retrieving all details of review cycle"
+      operationId: getAllReviewCycles
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: reviewCycleDetailsAllObject
+            properties:
+              reviewCycleDetailsAll:
+                type: array
+                items:
+                  $ref: "#/definitions/reviewCycleDetailsAll"
+              responseData:
+                  $ref: "#/definitions/ResponseData"              
+
+  /review/upsertTLReflection:
+    post:
+      tags:
+      - "review"
+      summary: "Upserts/Add TL reflection for a teamMember"
+      operationId: upsertTLReflection
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "the id of TL reflection for which update is to be made"
+        required: false
+        type: string
+      - name: "teamMember"
+        in: "query"
+        description: "the team member for which reflection is to be added details"
+        required: true
+        type: string
+      - name: "reflectionText"
+        in: "query"
+        description: "the reflection text to be added"
+        required: true
+        type: string  
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+        
+  /review/upsertTLReflectionComment:
+    post:
+      tags:
+      - "review"
+      summary: "Adds reflection comment to a TL Reflection for a teamMember"
+      operationId: upsertTLReflectionComment
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "the id of TL reflection for which comment is to added"
+        required: true
+        type: string
+      - name: "reflectionComment"
+        in: "query"
+        description: "the comment to be added to the reflection"
+        required: true
+        type: string  
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+
+  /review/upsertSelfReflection:
+    post:
+      tags:
+      - "review"
+      summary: "Upsert/Add Self reflection for a teamMember"
+      operationId: upsertSelfReflection
+      parameters:
+      - name: "reviewPeriod"
+        in: "query"
+        description: "the review period for which update is to be made"
+        required: true
+        type: string
+      - name: "selfReflectionText"
+        in: "query"
+        description: "the self reflection text to be added in self reflection"
+        required: true
+        type: string
+      - name: "templateId"
+        in: "query"
+        description: "the PM form template Id"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"  
+            
+  /review/getReviewCycleDates:
+    get:
+      tags:
+      - "review"
+      summary: "Fetches important dates of the review cycles"
+      operationId: getReviewCycleDates
+      parameters:
+      - name: "performanceYear"
+        in: "query"
+        description: "the performance year for which review cycle details are to be fetched"
+        required: false
+        type: string
+      - name: "teamMember"
+        in: "query"
+        description: "the team member for which review cycle details are to be fetched"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: reviewCycleDateObject
+            properties:
+              reviewCycleParams:
+                $ref: "#/definitions/reviewCycleDates"
+              responseData:
+                $ref: "#/definitions/ResponseData" 
+
+  /review/getPerformanceDetails:
+    get:
+      tags:
+      - "review"
+      summary: "Fetches performance details for the logged in user"
+      operationId: getPerformanceDetails
+      parameters:
+      - name: "performanceYear"
+        in: "query"
+        description: "the performance year for which review cycle details are to be fetched"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: performanceFormDetailsObject
+            properties:
+              performanceFormDetails:
+                type: array
+                items:
+                  $ref: "#/definitions/performanceObject"
+              responseData:
+                $ref: "#/definitions/ResponseData"
+
+  /review/getPerformanceDetailsForTM:
+    get:
+      tags:
+      - "review"
+      summary: "Fetches performance details for the team member"
+      operationId: getPerformanceDetailsForTM
+      parameters:
+      - name: "performanceYear"
+        in: "query"
+        description: "the performance year for which performance details are to be fetched"
+        required: true
+        type: string
+      - name: "teamMember"
+        in: "query"
+        description: "the team member for which performance details are to be fetched"
+        required: true
+        type: string      
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: performanceFormDetailsObject
+            properties:
+              performanceFormDetails:
+                type: array
+                items:
+                  $ref: "#/definitions/performanceObject"
+              responseData:
+                $ref: "#/definitions/ResponseData"
+                                               
+  /review/upsertReviewAndRatings:
+    post:
+      tags:
+      - "review"
+      summary: "Upsert review and ratings for a team member"
+      operationId: upsertReviewAndRatings
+      parameters:
+      - name: "reviewData"
+        in: "body"
+        description: "the reviews and ratings to upsert"
+        required: true
+        schema: 
+          $ref: "#/definitions/reviewData"
+      - name: "teamMember"
+        in: "query"
+        description: "the team member for which review and ratings are to updated"
+        required: true
+        type: string
+      - name: "templateId"
+        in: "query"
+        description: "the performance form template"
         required: true
         type: string
       produces:
@@ -1340,15 +1754,10 @@ paths:
         200:
           description: "successful operation"
           schema:
-           type: object
-           title: reviewCycleDetailsObject
-           properties: 
-            reviewCycleDetails:
-             $ref: "#/definitions/reviewCycleDetail"
-            responseData:
-                $ref: "#/definitions/ResponseData"   
-
-              
+            type: array
+            items:
+              $ref: "#/definitions/ResponseData"          
+            
 #######################################################################################################
 #######################################################################################################
 ############################################ Documents   ##############################################
@@ -1405,6 +1814,9 @@ paths:
                 type: string
                 format: binary    
               
+ 
+ 
+ 
  
 #######################################################################################################
 #######################################################################################################
@@ -1501,6 +1913,8 @@ definitions:
         description: "custom08-businessUnit of the user"
         type: string
       defaultFullName:
+        type: string
+      midYearRatingEligibility:
         type: string  
 
   MeasureOfSuccess:
@@ -1514,6 +1928,26 @@ definitions:
         description: "Percent complete of the Goal"
         type: string
 
+  MidYearTeamStats:
+    type: object
+    properties:
+      midYearReviewsCompletedPerc:
+        type: string
+        
+  YearEndTeamStats:
+    type: object
+    properties:
+      yearEndReviewsCompletedPerc:
+        type: string
+  
+  TeamGoalStats:
+    type: object
+    properties:
+      goalsAgreedPerc:
+        type: string
+      devPlansActivePerc:
+        type: string
+            
   TeamStats:
     type: object
     properties:
@@ -1525,7 +1959,7 @@ definitions:
         type: string
       yearEndReviewsCompletedPerc:
         type: string
-        
+    
   AvailableTag:
     type: object 
     properties:
@@ -1698,6 +2132,8 @@ definitions:
         type: string
       defaultFullName:
         type: string
+      midYearRatingEligibility:
+        type: string
       isTeamLeader:
         type: string
         format: boolean
@@ -1705,6 +2141,10 @@ definitions:
         type: string
       goalSettingStage:
         type: string
+      midYearReviewStatus:
+        type: string
+      yearEndReviewStatus:
+        type: string       
         
   ParentGoalDetails:
     type: object
@@ -1795,31 +2235,93 @@ definitions:
   reviewCycleDetail:
     type: object
     properties:
-      isMidYearReview:
-        type: boolean
-      isMidYearLockin:
-        type: boolean
-      isMidYearRelease:
-        type: boolean
-      midYearDueDate:
+      reviewPeriod:
         type: string
-      midYearReleaseDate:
-        type: string        
-      midYearDueDateCounter:
+      processStep:
         type: string
-      isYearEndReview:
-        type: boolean
-      isYearEndLockin:
-        type: boolean
-      isYearEndRelease:
-        type: boolean
-      yearEndDueDate:
-        type: string
-      yearEndReleaseDate:
-        type: string        
-      yearEndDueDateCounter:
+      dueDate:
         type: string
         
+  reviewCycleDetailsAll:
+    type: object
+    properties:
+      year:
+        type: string
+      label:
+        type: string
+      goalPlanTemplateId:
+        type: string
+      startDate:
+        type: string
+      status:
+        type: string
+
+  reviewData:
+    type: object
+    properties:
+      reviewText:
+        type: string
+      startegyRating:
+        type: string
+      wowRating:
+        type: string
+      busRating:
+        type: string
+      overallRating:
+        type: string
+                     
+  reviewCycleDates:
+    type: object
+    properties:
+      midYearTemplateId:
+        type: string
+      yearEndTemplateId:
+        type: string
+      midYearReleaseStartDate:
+        type: string
+      midYearReleaseDueDate:
+        type: string
+      yearEndReleaseStartDate:
+        type: string
+      yearEndReleaseDueDate:
+        type: string
+
+  reflectionComment:
+    type: object
+    properties:
+      Creator:
+        type: string
+      Date:
+        type: string
+      Text:
+        type: string
+
+  performanceObject:
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+      review_period:
+        type: string
+      creator:
+        type: string
+      date:
+        type: string
+      text:
+        type: string
+      reflection_comment:
+        $ref: "#/definitions/reflectionComment"
+      startegy_rating:
+        type: string
+      wofw_rating:
+        type: string
+      bus_rating:
+        type: string
+      overall_rating:
+        type: string
+                      
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io" 
