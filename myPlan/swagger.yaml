@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.5.06"
+  version: "1.5.11"
   title: "Performance Evaluation by Woolies"
 host: "performancemanager10.successfactors.com"
 basePath: "/"
@@ -138,7 +138,91 @@ paths:
                   $ref: "#/definitions/TeamMemberDetails"
               responseData:
                 $ref: "#/definitions/ResponseData"
-                
+
+
+  /employee/getSingleTeamMemberDetails:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the details of one Team Member, including the stage of the Goal Setting Process"
+      operationId: getSingleTeamMemberDetails
+      parameters:
+      - name: "teamMember"
+        in: "query"
+        description: "the user id of the team member to read the details for"
+        required: true
+        type: string
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: true
+        type: string
+      - name: "performanceYear"
+        in: "query"
+        description: "performanceYear for which MY and YE status needs to be shown"
+        required: true
+        type: string
+      - name: "readGoalStage"
+        in: "query"
+        description: "If the parameter is present and true, the Goal Stage should be read"
+        required: false
+        type: boolean
+      - name: "checkIsMemberTeamLead"
+        in: "query"
+        description: "If the parameter is present and true, checks whether the team member is also a team lead"
+        required: false
+        type: boolean
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: teamMembers
+            properties:
+              teamMembers:
+                type: array
+                items:
+                  $ref: "#/definitions/TeamMemberDetails"
+              responseData:
+                $ref: "#/definitions/ResponseData"
+
+
+  /employee/getTeamForDashboard:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the team of a team leader, populating only the header information"
+      operationId: getTeamForDashboard
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: true
+        type: string
+      - name: "teamLeader"
+        in: "query"
+        description: "the team leader for which to retrieve"
+        required: false
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            title: teamForDashboard
+            type: object
+            properties:
+              teamMemberList:
+                type: array
+                items:
+                  $ref: "#/definitions/TeamMemberHeader"
+              responseData:
+                $ref: "#/definitions/ResponseData"
+              
+
 
   /employee/sendEmailNotification:
     post:
@@ -760,6 +844,11 @@ paths:
       - name: "goalPlanTemplateId"
         in: "query"
         description: "the goal plan template Id for which the splash page is acknowledged"
+        required: true
+        type: string
+      - name: "splashPageKey"
+        in: "query"
+        description: "the key to identify the splash page to be acknowledged"
         required: true
         type: string
       produces:
@@ -1516,7 +1605,7 @@ paths:
                   $ref: "#/definitions/reviewCycleDetail"
               reviewCycleDates:
                 $ref: "#/definitions/reviewCycleDates"
-              reviewCycleNotificationText:
+              notificationText:
                 type: object
                 properties:
                   teamMemberNotification:
@@ -1633,37 +1722,32 @@ paths:
           schema:
             $ref: "#/definitions/ResponseData"  
             
-  /review/getReviewCycleDates:
-    get:
+
+  /review/sendPerformanceEmailNotifications:
+    post:
       tags:
       - "review"
-      summary: "Fetches important dates of the review cycles"
-      operationId: getReviewCycleDates
+      summary: "Sends Email Notifications related to actions performed by TL/TM during the performance review cycle"
+      operationId: sendPerformanceEmailNotifications
       parameters:
-      - name: "performanceYear"
+      - name: "recipient"
         in: "query"
-        description: "the performance year for which review cycle details are to be fetched"
-        required: false
+        description: "the recipient of the email"
+        required: true
         type: string
-      - name: "teamMember"
+      - name: "notificationType"
         in: "query"
-        description: "the team member for which review cycle details are to be fetched"
-        required: false
-        type: string
+        description: "The Type of notification. Possible values are ..."
+        required: true
+        type: string  
       produces:
       - "application/json"
       responses:
         200:
-          description: "successful operation"
-          schema:  
-            type: object
-            title: reviewCycleDateObject
-            properties:
-              reviewCycleParams:
-                $ref: "#/definitions/reviewCycleDates"
-              responseData:
-                $ref: "#/definitions/ResponseData" 
-
+          description: "operation successful"
+          schema:
+            $ref: "#/definitions/ResponseData"
+            
   /review/getPerformanceDetails:
     get:
       tags:
@@ -2143,9 +2227,30 @@ definitions:
         type: string
       midYearReviewStatus:
         type: string
+      midYearOverallRating:
+        type: string        
       yearEndReviewStatus:
         type: string       
-        
+      yearEndOverallRating:
+        type: string
+
+  TeamMemberHeader:
+    type: object
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      username:
+        type: string
+      defaultFullName:
+        type: string
+      midYearRatingEligibility:
+        type: string
+      isTeamLeader:
+        type: string
+        format: boolean
+                
   ParentGoalDetails:
     type: object
     properties:
@@ -2284,6 +2389,8 @@ definitions:
       yearEndReleaseStartDate:
         type: string
       yearEndReleaseDueDate:
+        type: string
+      yearEndLockinStartDate:
         type: string
 
   reflectionComment:
