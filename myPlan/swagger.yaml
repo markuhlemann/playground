@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.5.11"
+  version: "1.5.13"
   title: "Performance Evaluation by Woolies"
 host: "performancemanager10.successfactors.com"
 basePath: "/"
@@ -96,49 +96,6 @@ paths:
               mimeType:
                 type: string            
             
-  /employee/getTeamMemberDetails:
-    get:
-      tags:
-      - "employee"
-      summary: "Retrieves the Team Members for a Team Leader, including the stage of the Goal Setting Process"
-      operationId: getTeamMemberDetails
-      parameters:
-      - name: "goalPlanTemplateId"
-        in: "query"
-        description: "the goal plan template Id for which to execute the preparation"
-        required: true
-        type: string
-      - name: "readGoalStage"
-        in: "query"
-        description: "If the parameter is present and true, the Goal Stage should be read"
-        required: false
-        type: boolean
-      - name: "checkIsMemberTeamLead"
-        in: "query"
-        description: "If the parameter is present and true, checks whether the team member is also a team lead"
-        required: false
-        type: boolean
-      - name: "performanceYear"
-        in: "query"
-        description: "performanceYear for which MY and YE status needs to be shown"
-        required: false
-        type: string
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            type: object
-            title: teamMembers
-            properties:
-              teamMembers:
-                type: array
-                items:
-                  $ref: "#/definitions/TeamMemberDetails"
-              responseData:
-                $ref: "#/definitions/ResponseData"
-
 
   /employee/getSingleTeamMemberDetails:
     get:
@@ -678,6 +635,11 @@ paths:
       summary: "Upsert one or many goals against SuccessFactors"
       operationId: upsertGoalsFlat
       parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the ID of the goal plan template to retrieve the the goals from. Defaulted to the current goal template "
+        required: false
+        type: string   
       - name: "goals"
         in: "body"
         description: "the goals to import"
@@ -1637,6 +1599,32 @@ paths:
               responseData:
                   $ref: "#/definitions/ResponseData"              
 
+  /review/getReviewCycleTemplateIds:
+    get:
+      tags:
+      - "review"
+      summary: "Retrieving mid year and year end form template ids for a performance year"
+      operationId: getReviewCycleTemplateIds
+      parameters:
+      - name: "performanceYear"
+        in: "query"
+        description: "the performance year for which template ids are to be fetched"
+        required: true
+        type: string      
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: formTemplateIdObject
+            properties:
+              reviewCycleTemplates:
+                  $ref: "#/definitions/formTemplates"
+              responseData:
+                  $ref: "#/definitions/ResponseData"
+                  
   /review/upsertTLReflection:
     post:
       tags:
@@ -2346,7 +2334,15 @@ definitions:
         type: string
       dueDate:
         type: string
-        
+   
+  formTemplates:  
+    type: object
+    properties:
+      midYearTemplateId:
+        type: string
+      yearEndTemplateId:
+        type: string
+           
   reviewCycleDetailsAll:
     type: object
     properties:
@@ -2386,9 +2382,13 @@ definitions:
         type: string
       midYearReleaseDueDate:
         type: string
+      midYearReviewStartDate:
+        type: string
       yearEndReleaseStartDate:
         type: string
       yearEndReleaseDueDate:
+        type: string
+      yearEndReviewStartDate:
         type: string
       yearEndLockinStartDate:
         type: string
