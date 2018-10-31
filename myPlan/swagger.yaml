@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.5.16"
+  version: "1.5.17"
   title: "Performance Evaluation by Woolies"
 host: "performancemanager10.successfactors.com"
 basePath: "/"
@@ -183,6 +183,11 @@ paths:
       - name: "goalPlanTemplateId"
         in: "query"
         description: "the goal plan template Id for which to execute the preparation"
+        required: true
+        type: string
+      - name: "performanceYear"
+        in: "query"
+        description: "the performance year"
         required: true
         type: string
       - name: "teamLeader"
@@ -515,7 +520,7 @@ paths:
       summary: "Retrieves the details of the Goal Plan Template Id provided."
       operationId: getGoalPlanTemplateDetails
       parameters:
-      - name: "goalTemplateId"
+      - name: "goalPlanTemplateId"
         in: "query"
         description: "the ID of the goal template to retrieve the the goals from. Defaulted to the current goal template "
         required: false
