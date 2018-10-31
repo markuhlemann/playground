@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.5.15"
+  version: "1.5.16"
   title: "Performance Evaluation by Woolies"
 host: "performancemanager10.successfactors.com"
 basePath: "/"
@@ -11,7 +11,7 @@ tags:
 schemes:
 - "http"
 paths:
-
+   
 
   /employee/version:
     get:
@@ -270,44 +270,7 @@ paths:
             items:
               $ref: "#/definitions/ResponseData"
               
-  /employee/cascadeParentGoalExist:
-    get:
-      tags:
-      - "employee"
-      summary: "Retrieves the Team Members for a Team Leader, including the parentGoalId for already cascaded Goal"
-      operationId: cascadeParentGoalExist
-      parameters:
-      - name: "goalPlanTemplateId"
-        in: "query"
-        description: "the goal plan template Id for which to execute the preparation"
-        required: true
-        type: string
-      - name: "parentGoal"
-        in: "query"
-        description: "the parentGoal Id for which Goal is already cascaded"
-        required: true
-        type: string  
-      - name: "checkIsMemberTeamLead"
-        in: "query"
-        description: "If the parameter is present and true, checks whether the team member is also a team lead"
-        required: false
-        type: boolean
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            type: object
-            title: cascadeTeamMembers
-            properties:
-              cascadeTeamMembers:
-                type: array
-                items:
-                  $ref: "#/definitions/ParentGoalDetails"
-              responseData:
-                $ref: "#/definitions/ResponseData"     
-                
+
   /employee/getTeamGoalStatistics:
     get:
       tags:
