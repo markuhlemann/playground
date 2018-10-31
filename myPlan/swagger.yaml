@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.5.13"
+  version: "1.5.15"
   title: "Performance Evaluation by Woolies"
 host: "performancemanager10.successfactors.com"
 basePath: "/"
@@ -96,6 +96,33 @@ paths:
               mimeType:
                 type: string            
             
+  /employee/getTeamMembersForCascade:
+    get:
+      tags:
+      - "employee"
+      summary: "Retrieves the Team Members for the cascade Goal functionality. These are all direct reports who have access to the MyPlan application"
+      operationId: getTeamMembersForCascade
+      parameters:
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: teamMembersForCascade
+            properties:
+              teamMembers:
+                type: array
+                items:
+                  $ref: "#/definitions/TeamMemberHeader"
+              responseData:
+                $ref: "#/definitions/ResponseData"
 
   /employee/getSingleTeamMemberDetails:
     get:
@@ -281,49 +308,6 @@ paths:
               responseData:
                 $ref: "#/definitions/ResponseData"     
                 
-  /employee/getTeamMembers:
-    get:
-      tags:
-      - "employee"
-      summary: "Retrieves the Team Members for a Team Member, including the stage of the Goal Setting Process"
-      operationId: getTeamMembers
-      parameters:
-      - name: "goalPlanTemplateId"
-        in: "query"
-        description: "the goal plan template Id for which to execute the operation"
-        required: true
-        type: string
-      - name: "readGoalStage"
-        in: "query"
-        description: "If the parameter is present and true, the Goal Stage should be read"
-        required: false
-        type: boolean
-      - name: "checkIsMemberTeamLead"
-        in: "query"
-        description: "If the parameter is present and true, checks whether the team member is also a team lead"
-        required: false
-        type: boolean
-      - name: "teamMember"
-        in: "query"
-        description: "team Member Id for which to execute the operation"
-        required: true
-        type: string 
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:  
-            type: object
-            title: teamMembers
-            properties:
-              teamMembers:
-                type: array
-                items:
-                  $ref: "#/definitions/TeamMemberDetails"
-              responseData:
-                $ref: "#/definitions/ResponseData"
-             
   /employee/getTeamGoalStatistics:
     get:
       tags:
@@ -2238,6 +2222,8 @@ definitions:
       isTeamLeader:
         type: string
         format: boolean
+      manager:
+        type: string
                 
   ParentGoalDetails:
     type: object
