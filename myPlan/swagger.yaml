@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API definition for the Employee performance evaluation process."
-  version: "1.5.19"
+  version: "1.6.1"
   title: "Performance Evaluation by Woolies"
 host: "performancemanager10.successfactors.com"
 basePath: "/"
@@ -95,7 +95,31 @@ paths:
                 type: string
               mimeType:
                 type: string            
-            
+
+  /employee/getUserFullName:
+    get:
+      tags:
+      - "employee"
+      summary: "Returns the Full Name of the userId passed to the service"
+      operationId: getUserFullName
+      parameters:
+      - name: "userId"
+        in: "query"
+        description: "the userId for which full name is required to be fetched"
+        required: true
+        type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:  
+            type: object
+            title: userFullName
+            properties:
+              fullName:
+                type: string 
+                            
   /employee/getTeamMembersForCascade:
     get:
       tags:
@@ -264,6 +288,11 @@ paths:
         in: "query"
         description: "the username to reset the goals for"
         required: true
+        type: string
+      - name: "goalPlanTemplateId"
+        in: "query"
+        description: "the goal plan template Id for which to execute the preparation. Uses the Default if none is passed in"
+        required: false
         type: string
       produces:
       - "application/json"
@@ -1813,6 +1842,37 @@ paths:
             items:
               $ref: "#/definitions/ResponseData"          
             
+
+  /review/uploadRatingForTeamMember:
+    post:
+      tags:
+      - "review"
+      summary: "For a single Team Member, upserts the Overall rating, custom ratings, reviewer, review date and Review status to the myPlan Framework"
+      operationId: uploadRatingForTeamMember
+      parameters:
+      - name: "uploadRating"
+        in: "body"
+        description: "the ratings to upload"
+        required: true
+        schema: 
+          $ref: "#/definitions/UploadRatingBody"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: object
+            title: uploadRatingResult
+            properties:
+              uploadForUser:
+                type: string
+              responseData:
+                type: array
+                items:
+                  $ref: "#/definitions/ResponseData"          
+            
+          
 #######################################################################################################
 #######################################################################################################
 ############################################ Documents   ##############################################
@@ -1869,9 +1929,7 @@ paths:
                 type: string
                 format: binary    
               
- 
- 
- 
+
  
 #######################################################################################################
 #######################################################################################################
@@ -2414,6 +2472,30 @@ definitions:
       overall_rating:
         type: string
                       
+  UploadRatingBody:
+    type: object
+    properties:
+      performanceTemplateId:
+        type: string
+      userName:
+        type: string
+      overallRating:
+        type: string
+      ratingStrategy:
+        type: string
+      ratingBusPerformance:
+        type: string
+      ratingWow:
+        type: string
+      dashboardStatus:
+        type: string
+      reviewerName:
+        type: string
+      reviewerDate:
+        type: string
+    
+    
+    
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io" 
